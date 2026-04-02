@@ -21,7 +21,7 @@ const navbarHtml = `
         <div class="container-fluid">
            
             <div class="d-flex align-items-center">
-                <img src="../include/logo-png-transparent-smaller.png" alt="NutriPaw Logo" class="me-3" style="height: 40px; width: auto;">
+                <img src="./include/logo-png-transparent-smaller.png" alt="NutriPaw Logo" class="me-3" style="height: 40px; width: auto;">
                 <span class="fw-bold fst-italic fs-4">NutriPaw</span>
             </div>
 
