@@ -1,6 +1,14 @@
+/*object-fit: cover -- use for mostly every photo, it prevents the image from stretching if it isn't perfectly square*/
 html
 {
+    /*damit die gradiient hintergrundfarbe nicht in der mitte abbricht und neu beginnt*/
+    min-height: 100%;
     font-family: Arial, Helvetica, sans-serif;
+}
+
+body
+{
+    background: linear-gradient(#C7DCB9, #DBD1B1);
 }
 
 h1

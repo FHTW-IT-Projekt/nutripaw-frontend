@@ -1,0 +1,62 @@
+/* The main white box holding everything */
+.dashboard-wrapper {
+    background-color: #fcfcf9;
+}
+
+/* Section Titles (My Pets, Petsitting for) */
+.section-title {
+    font-style: italic;
+    color: #c0b28e; /* Tan/Gold color */
+    font-weight: 700;
+}
+
+/* Individual Pet Cards */
+.pet-card {
+    border: 2px solid #e8e3d3;
+    border-radius: 12px;
+    background-color: #fffefb;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Pet Avatar Image */
+.pet-avatar {
+    width: 150px;
+    height: 150px;
+    object-fit: cover; /* Prevents stretching if image isn't perfectly square */
+    border-radius: 8px;
+}
+
+/* Custom Tan Button */
+.btn-tan {
+    background-color: #d6b876;
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+.btn-tan:hover {
+    background-color: #c2a669;
+    color: white;
+}
+
+/* Task row bottom border */
+.task-row {
+    border-bottom: 1px solid #e8e3d3;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+.task-row:last-child {
+    border-bottom: none;
+}
+
+/* Custom sizing for the "late time" input box */
+.time-input {
+    width: 100px;
+    display: inline-block;
+}
+
+/* Subdued text for timestamps */
+.time-since-text {
+    color: #a0a0a0;
+    font-size: 0.85rem;
+}

@@ -1,0 +1,59 @@
+{
+  "myPets": [
+    {
+      "petId": 101,
+      "name": "Nao",
+      "species": "Housecat",
+      "age": "7 yrs. old",
+      "weight": "11.5 Kg",
+      "imageUrl": "https://placecats.com/200/200",
+      "tasks": [
+        {
+          "taskId": "t1",
+          "name": "Food",
+          "frequency": "Daily",
+          "schedule": ["9 am", "6 pm"],
+          "lastCompletedTime": "2026-04-09T14:30:00Z" 
+        },
+        {
+          "taskId": "t2",
+          "name": "Amiodarone",
+          "frequency": "Daily",
+          "schedule": ["9 am", "6 pm"],
+          "lastCompletedTime": "2026-04-09T08:00:00Z"
+        },
+        {
+          "taskId": "t3",
+          "name": "Vitamin D",
+          "frequency": "1x Week",
+          "schedule": ["6 pm"],
+          "lastCompletedTime": "2026-04-07T18:00:00Z"
+        }
+      ],
+      "access": [
+        { "username": "_user_jane_doe", "role": "Sitter" },
+        { "username": "_user_max_mustermann", "role": "Parent" }
+      ]
+    }
+  ],
+  "petsitting": [
+    {
+      "petId": 201,
+      "name": "Mr. Cameltoe",
+      "species": "Veiled Chameleon",
+      "age": "5 yrs. old",
+      "weight": "83 g",
+      "imageUrl": "https://placecats.com/200/201",
+      "tasks": [
+        {
+          "taskId": "t4",
+          "name": "Food",
+          "frequency": "2x Week",
+          "schedule": ["11 am"],
+          "lastCompletedTime": "2026-04-09T11:00:00Z"
+        }
+      ],
+      "access": []
+    }
+  ]
+}

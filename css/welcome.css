@@ -1,13 +1,3 @@
-/*damit die gradiient hintergrundfarbe nicht in der mitte abbricht und neu beginnt*/
-html
-{
-    min-height: 100%;
-}
-body
-{
-    background: linear-gradient(#C7DCB9, #DBD1B1);
-}
-
 /*Text von landing page und about us*/
 .welcome
 {
