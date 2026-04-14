@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Fetch the JSON and tell the imported function to draw it
 async function fetchPetData() {
     try {
-        const response = await fetch('pets.json');
+        const response = await fetch('../dummy_data/pet.json');
         const data = await response.json();
 
         // Use the imported function here!

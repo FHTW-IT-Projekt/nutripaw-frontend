@@ -1,5 +1,5 @@
 // 1. IMPORT the time calculator from our other file
-import { calculateTimeSince } from './timeUtils.js';
+import { calculateTimeSince } from './timeUtil.js';
 
 // 2. EXPORT the main render function so the dashboard can use it
 export function renderPetCards(petsArray, containerId) {
