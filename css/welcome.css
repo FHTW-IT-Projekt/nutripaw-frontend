@@ -21,7 +21,10 @@
 
 .welcome p
 {
-    padding: 3%;
+    padding: 5%;
+    padding-left: 10%;
+    padding-right: 10%;
+
 }
 .line
 {
