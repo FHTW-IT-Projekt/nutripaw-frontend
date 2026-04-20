@@ -15,13 +15,14 @@ for(const item of navLinks){
         </li>`;
 }
 
+
 const navbarHtml = `
 <div class="container mt-3">
     <nav class="navbar navbar-expand-lg bg-white shadow-sm rounded-4 px-3">
         <div class="container-fluid">
            
             <div class="d-flex align-items-center">
-                <img src="./include/logo-png-transparent-smaller.png" alt="NutriPaw Logo" class="me-3" style="height: 40px; width: auto;">
+                <img src="/img/logo-png-transparent-smaller.png" alt="NutriPaw Logo" class="me-3" style="height: 40px; width: auto;">
                 <span class="fw-bold fst-italic fs-4">NutriPaw</span>
             </div>
 
