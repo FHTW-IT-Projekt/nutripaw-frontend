@@ -1,7 +1,7 @@
-// 1. IMPORT the time calculator from our other file
 import { calculateTimeSince } from './timeUtil.js';
 
-// 2. EXPORT the main render function so the dashboard can use it
+const API = 'http://localhost:3000/api';
+
 export function renderPetCards(petsArray, containerId) {
     const container = document.getElementById(containerId);
     let htmlContent = "";
@@ -9,7 +9,7 @@ export function renderPetCards(petsArray, containerId) {
     petsArray.forEach(pet => {
         let tasksHtml = "";
         pet.tasks.forEach(task => {
-            tasksHtml += buildTaskRow(task);
+            tasksHtml += buildTaskRow(pet.petId, task);
         });
 
         let accessHtml = "";
@@ -46,21 +46,26 @@ export function renderPetCards(petsArray, containerId) {
     });
 
     container.innerHTML = htmlContent;
+    attachCheckboxListeners();
 }
 
-// 3. Helper function (No export needed, as it's only used inside this file)
-function buildTaskRow(task) {
+function buildTaskRow(petId, task) {
     let scheduleHtml = "";
     task.schedule.forEach(time => {
+        const cbId = `fed-${petId}-${task.taskId}-${time.replace(' ', '')}`;
         scheduleHtml += `
             <label class="me-2">
-                ${time} <input type="checkbox" class="form-check-input ms-1">
+                ${time} <input type="checkbox"
+                    class="form-check-input ms-1 feeding-checkbox"
+                    id="${cbId}"
+                    data-pet-id="${petId}"
+                    data-task-id="${task.taskId}"
+                    data-schedule-time="${time}">
             </label>
             <span class="text-muted me-2">|</span>
         `;
     });
 
-    // We use the imported function here!
     const timeSinceString = calculateTimeSince(task.lastCompletedTime);
 
     return `
@@ -71,11 +76,64 @@ function buildTaskRow(task) {
                 <label class="me-2 text-muted" style="font-size: 0.9rem;">
                     late feeding at: <input type="time" class="form-control form-control-sm time-input ms-1">
                 </label>
-                <span class="time-since-text ms-2">
+                <span class="time-since-text ms-2" id="last-${petId}-${task.taskId}">
                     | last: ${timeSinceString}
                 </span>
                 <button class="btn btn-outline-warning btn-sm ms-auto">Edit</button>
             </div>
         </div>
     `;
+}
+
+function attachCheckboxListeners() {
+    document.querySelectorAll('.feeding-checkbox').forEach(cb => {
+        cb.addEventListener('change', onCheckboxChange);
+    });
+}
+
+async function onCheckboxChange(e) {
+    const cb = e.target;
+    const petId = cb.dataset.petId;
+    const taskId = cb.dataset.taskId;
+    const scheduleTime = cb.dataset.scheduleTime;
+
+    if (cb.checked) {
+        try {
+            await fetch(`${API}/feeding-events`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pet_id: petId, task_id: taskId, schedule_time: scheduleTime })
+            });
+            const lastEl = document.getElementById(`last-${petId}-${taskId}`);
+            if (lastEl) lastEl.textContent = '| last: just now';
+        } catch {
+            cb.checked = false;
+        }
+    } else {
+        try {
+            await fetch(`${API}/feeding-events`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pet_id: petId, task_id: taskId, schedule_time: scheduleTime })
+            });
+        } catch {
+            cb.checked = true;
+        }
+    }
+}
+
+export async function loadFedTodayStatus(petsArray) {
+    for (const pet of petsArray) {
+        try {
+            const res = await fetch(`${API}/feeding-events/today/${pet.petId}`);
+            const events = await res.json();
+            events.forEach(event => {
+                const cbId = `fed-${pet.petId}-${event.task_id}-${event.schedule_time.replace(' ', '')}`;
+                const cb = document.getElementById(cbId);
+                if (cb) cb.checked = true;
+            });
+        } catch {
+            // backend not reachable, checkboxes stay unchecked
+        }
+    }
 }
