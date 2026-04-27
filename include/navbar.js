@@ -3,7 +3,7 @@ const container = document.getElementById('navCont');
 const navLinks = [
     {name: 'Home', link:'/pages/user.html'},
     {name: 'About us', link: '/pages/aboutus.html'},
-    {name: 'Sign In / Sign Up', link: '#'}
+    {name: 'Login', link: '/pages/login.html'}
 ];
 
 let linksHtml = '';
