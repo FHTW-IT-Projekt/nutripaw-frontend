@@ -1,0 +1,28 @@
+.feeding-card {
+    background-color: #fffefb;
+    border: 2px solid #e8e3d3;
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+.section-title {
+    font-style: italic;
+    color: #c0b28e;
+    font-weight: 700;
+}
+
+.btn-tan {
+    background-color: #d6b876;
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+.btn-tan:hover {
+    background-color: #c2a669;
+    color: white;
+}
+
+#feeding-table thead,
+#med-table thead {
+    background-color: #f5f0e8;
+}
