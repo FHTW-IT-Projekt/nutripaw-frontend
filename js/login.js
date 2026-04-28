@@ -35,7 +35,7 @@ form.addEventListener('submit', async (e) => {
         const data = await res.json();
 
         if (!res.ok) {
-            showError(data.error || 'Ungültige E-Mail-Adresse oder Passwort.');
+            showError(data.error || 'Invalid email address or password.');
             return;
         }
 
