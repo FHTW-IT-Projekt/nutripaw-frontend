@@ -1,10 +1,13 @@
 const container = document.getElementById('navCont');
 
 const navLinks = [
-    {name: 'Home', link:'/pages/user.html'},
+    {name: 'Home', link:'/index.html'},
     {name: 'About us', link: '/pages/aboutus.html'},
-    {name: 'Login', link: '/pages/login.html'}
+    {name: 'Sign In / Sign Up', link: '/pages/login.html'}
 ];
+
+//Notiz: Logo click -> eingeloggt user dashboard, nicht eingeloggt homepage
+
 
 let linksHtml = '';
 for(const item of navLinks){
@@ -22,7 +25,7 @@ const navbarHtml = `
         <div class="container-fluid">
            
             <div class="d-flex align-items-center">
-                <img src="/img/logo-png-transparent-smaller.png" alt="NutriPaw Logo" class="me-3" style="height: 40px; width: auto;">
+                <a href="/index.html"><img src="/img/logo-png-transparent-smaller.png" alt="NutriPaw Logo" class="me-3" style="height: 40px; width: auto;"></a>
                 <span class="fw-bold fst-italic fs-4">NutriPaw</span>
             </div>
 
