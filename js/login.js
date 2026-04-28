@@ -22,7 +22,7 @@ form.addEventListener('submit', async (e) => {
     const password = document.getElementById('password').value;
 
     loginBtn.disabled = true;
-    loginBtn.textContent = 'Anmelden...';
+    loginBtn.textContent = 'Login...';
 
     try {
         const res = await fetch(`${API_BASE}/auth/login`, {
@@ -43,9 +43,9 @@ form.addEventListener('submit', async (e) => {
         window.location.href = '/pages/user.html';
 
     } catch {
-        showError('Verbindung zum Server fehlgeschlagen. Bitte versuche es später erneut.');
+        showError('Connection to the server failed. Please try again later.');
     } finally {
         loginBtn.disabled = false;
-        loginBtn.textContent = 'Anmelden';
+        loginBtn.textContent = 'Login';
     }
 });
