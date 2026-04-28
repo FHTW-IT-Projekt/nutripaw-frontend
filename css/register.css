@@ -1,0 +1,30 @@
+input
+{
+    margin: 5px;
+}
+#register_button
+{
+    max-width: 200px;
+    display: block;
+    margin: 0 auto;
+    color: #988753;
+    border: solid 1px #988753;
+}
+
+#reg_form input::placeholder
+{
+    color: #DBD1B1;
+    opacity: 1;
+}
+
+#reg_form input{
+    color: #988753;
+    border: solid 1px #988753;
+}
+
+#reg_form input:focus
+{
+    border-color: #DBD1B1;
+    outline: none;
+    box-shadow:  0 0 0 0.2rem rgba(173, 187, 110, 0.25);
+}
