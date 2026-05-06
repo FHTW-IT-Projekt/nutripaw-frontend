@@ -20,11 +20,13 @@
     <form id="reg_form" action="/register" method="post">
     <input name="firstName" class="form-control form-control-lg" type="text" placeholder="first name" required>
     <input name="lastName" class="form-control form-control-lg" type="text" placeholder="last name" required>
-    <input name="email" class="form-control form-control-lg" type="email" placeholder="e-mail" required>
+    <input name="email" id="email" class="form-control form-control-lg" type="email" placeholder="e-mail" required>
     <input name="confirm_email" class="form-control form-control-lg" type="email" placeholder="confirm e-mail" required>
     <input name="password" class="form-control form-control-lg" type="password" placeholder="password" required>
     <input name="confirm_password" class="form-control form-control-lg" type="password" placeholder="confirm password" required>
     <button id="register_button" class="form-control form-control-lg" type="submit">register</button>
+    <div id="general_error" class="text-danger fw-bold" style="color: red; margin-top: 10px; min-height:24px;"></div>
+    <div id="general_success" class="text-success fw-bold" style="color: green; margin-top: 10px; min-height:24px;"></div>
     </form>
     </div>
 </div>
