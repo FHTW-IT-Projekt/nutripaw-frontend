@@ -83,7 +83,6 @@ async function onSubmit(e) {
     feedback.style.display = 'none';
 
     try {
-        // Fütterungseintrag speichern
         const feedRes = await fetch(`${API}/food-entries`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -97,7 +96,6 @@ async function onSubmit(e) {
         });
         if (!feedRes.ok) throw new Error('Fütterung konnte nicht gespeichert werden');
 
-        // Angehakte Medikamente speichern
         const checkedMeds = document.querySelectorAll('.med-checkbox:checked');
         const givenAt = `${date} ${time}:00`;
         for (const cb of checkedMeds) {
@@ -116,7 +114,6 @@ async function onSubmit(e) {
         feedback.style.display = 'inline';
         setTimeout(() => { feedback.style.display = 'none'; }, 3000);
 
-        // Formular zurücksetzen (außer Datum/Zeit)
         document.getElementById('food-type').value = '';
         document.getElementById('food-amount').value = '';
         document.querySelectorAll('.med-checkbox').forEach(cb => cb.checked = false);
@@ -131,7 +128,7 @@ async function onSubmit(e) {
     }
 }
 
-async function loadFeedingLog() {
+export async function loadFeedingLog() {
     const tbody = document.getElementById('feeding-tbody');
     try {
         const res = await fetch(`${API}/food-entries`);
@@ -156,7 +153,7 @@ async function loadFeedingLog() {
     }
 }
 
-async function loadMedicationLog() {
+export async function loadMedicationLog() {
     const tbody = document.getElementById('med-tbody');
     try {
         const res = await fetch(`${API}/medication-logs`);
@@ -181,7 +178,7 @@ async function loadMedicationLog() {
     }
 }
 
-function formatDateTime(dtStr) {
+export function formatDateTime(dtStr) {
     const dt = new Date(dtStr);
     return dt.toLocaleDateString('de-AT') + ' ' + dt.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' });
 }
