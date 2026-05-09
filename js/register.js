@@ -1,8 +1,32 @@
-const form = document.querySelector('form');
+const form = document.getElementById('reg_form');
+const alertBox = document.getElementById('register-alert');
+const successBox = document.getElementById('success-alert');
+
+function showError(message) {
+    alertBox.textContent = message;
+    alertBox.classList.remove('d-none');
+}
+
+function hideError() {
+    alertBox.classList.add('d-none');
+}
+
+function showSuccess(message) {
+    successBox.textContent = message;
+    successBox.classList.remove('d-none');
+}
+
+function hideSuccess() {
+    successBox.classList.add('d-none');
+}
+
 
 form.addEventListener('submit', async (event) =>
 {
 event.preventDefault();
+hideError();
+hideSuccess();
+
 const formData = new FormData(form);
 const data = Object.fromEntries(formData.entries());
 
@@ -16,16 +40,29 @@ try{
             body: JSON.stringify(data)
         }
     );
-    const result = await response.json();
-    if (response.ok)
+    const result = await response.json().catch(()=> ({}));
+    if(response.ok)
     {
-        alert("Success: " + result.message);
         form.reset(); //nur bei Erfolg wird das Formular geleert
+        showSuccess("Registration successful!");
+        return result;
     }
     else
     {
-        alert("Error: " + result.message);
+        if(result.message.toLowerCase().includes("email"))
+        {
+            showError("This email already exists or doesn't match!");
+        }
+        else if(result.message.toLowerCase().includes("password"))
+        { 
+            showError("Password too short or doesn't match!");
+        }
+        else
+        {
+            showError(result.message);
+        }
     }
+
 } catch (error) 
 {
 console.error("Network error: ", error);
