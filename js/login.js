@@ -20,6 +20,7 @@ form.addEventListener('submit', async (e) => {
 
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
 
     loginBtn.disabled = true;
     loginBtn.textContent = 'Login...';
@@ -29,7 +30,7 @@ form.addEventListener('submit', async (e) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password, rememberMe })
         });
 
         const data = await res.json();
@@ -39,7 +40,6 @@ form.addEventListener('submit', async (e) => {
             return;
         }
 
-        sessionStorage.setItem('nutripaw_user', JSON.stringify({ userId: data.userId, name: data.name, email: data.email }));
         window.location.href = '/pages/user.html';
 
     } catch {
