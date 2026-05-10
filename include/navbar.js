@@ -2,6 +2,7 @@ const container = document.getElementById('navCont');
 
 const navLinks = [
     {name: 'Home', link:'/pages/user.html'},
+    {name: 'My Profile', link: '/pages/userprofile.html'},
     {name: 'About us', link: '/pages/aboutus.html'},
     {name: 'Login', link: '/pages/login.html'}
 ];
