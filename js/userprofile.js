@@ -1,5 +1,7 @@
 const API = 'http://localhost:3000/api';
 
+let currentUser = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const session = JSON.parse(sessionStorage.getItem('nutripaw_user') || 'null');
     if (!session) {
@@ -7,22 +9,132 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    renderUserInfo(session);
+    loadUserProfile(session);
     loadPets(session.userId);
     setupAddPetForm(session.userId);
+    setupEditProfileForm();
 });
 
+async function loadUserProfile(session) {
+    try {
+        const res = await fetch(`${API}/users/${session.userId}`);
+        if (!res.ok) throw new Error();
+        currentUser = await res.json();
+    } catch {
+        // Fall back to session data
+        const nameParts = (session.name || '').split(' ');
+        currentUser = {
+            userId: session.userId,
+            firstname: nameParts[0] || '',
+            lastname: nameParts.slice(1).join(' ') || '',
+            name: session.name,
+            email: session.email,
+            role: session.role || ''
+        };
+    }
+
+    renderUserInfo(currentUser);
+}
+
 function renderUserInfo(user) {
-    document.getElementById('user-name').textContent = user.name || 'Unknown User';
+    const fullName = user.name || [user.firstname, user.lastname].filter(Boolean).join(' ') || 'Unknown User';
+    document.getElementById('user-name').textContent = fullName;
     document.getElementById('user-email').textContent = user.email || '';
 
-    const initials = (user.name || '?')
+    const initials = fullName
         .split(' ')
         .map(w => w[0])
         .join('')
         .toUpperCase()
         .slice(0, 2);
     document.getElementById('user-initials').textContent = initials;
+
+    const roleBadge = document.getElementById('user-role-badge');
+    if (user.role) {
+        roleBadge.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+        roleBadge.className = `badge role-badge role-${user.role}`;
+    } else {
+        roleBadge.className = 'badge role-badge d-none';
+    }
+}
+
+function setupEditProfileForm() {
+    const modal = document.getElementById('editProfileModal');
+    const alertBox = document.getElementById('edit-profile-alert');
+
+    document.getElementById('edit-profile-btn').addEventListener('click', () => {
+        if (!currentUser) return;
+
+        const nameParts = (currentUser.name || '').split(' ');
+        document.getElementById('edit-firstname').value = currentUser.firstname || nameParts[0] || '';
+        document.getElementById('edit-lastname').value = currentUser.lastname || nameParts.slice(1).join(' ') || '';
+        document.getElementById('edit-email').value = currentUser.email || '';
+        document.getElementById('edit-role').value = currentUser.role || 'owner';
+
+        alertBox.className = 'alert d-none';
+        new bootstrap.Modal(modal).show();
+    });
+
+    document.getElementById('edit-profile-submit').addEventListener('click', async () => {
+        const firstname = document.getElementById('edit-firstname').value.trim();
+        const lastname = document.getElementById('edit-lastname').value.trim();
+        const email = document.getElementById('edit-email').value.trim();
+        const role = document.getElementById('edit-role').value;
+
+        alertBox.className = 'alert d-none';
+
+        if (!firstname || !lastname) {
+            alertBox.textContent = 'First name and last name are required.';
+            alertBox.className = 'alert alert-danger';
+            return;
+        }
+
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            alertBox.textContent = 'Please enter a valid email address.';
+            alertBox.className = 'alert alert-danger';
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API}/users/${currentUser.userId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ firstname, lastname, email, role })
+            });
+            if (!res.ok) throw new Error();
+
+            const updated = await res.json().catch(() => null);
+            currentUser = {
+                ...currentUser,
+                firstname,
+                lastname,
+                name: updated?.name || `${firstname} ${lastname}`,
+                email: updated?.email || email,
+                role: updated?.role || role
+            };
+
+            const session = JSON.parse(sessionStorage.getItem('nutripaw_user') || '{}');
+            session.name = currentUser.name;
+            session.email = currentUser.email;
+            session.role = currentUser.role;
+            sessionStorage.setItem('nutripaw_user', JSON.stringify(session));
+
+            bootstrap.Modal.getInstance(modal).hide();
+            renderUserInfo(currentUser);
+
+            const profileAlert = document.getElementById('profile-alert');
+            profileAlert.textContent = 'Profile updated successfully.';
+            profileAlert.className = 'alert alert-success mt-3';
+            setTimeout(() => { profileAlert.className = 'alert d-none'; }, 4000);
+        } catch {
+            alertBox.textContent = 'Could not save changes. Please check your connection and try again.';
+            alertBox.className = 'alert alert-danger';
+        }
+    });
+
+    modal.addEventListener('hidden.bs.modal', () => {
+        alertBox.className = 'alert d-none';
+    });
 }
 
 async function loadPets(userId) {

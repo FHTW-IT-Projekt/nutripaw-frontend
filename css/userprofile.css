@@ -1,6 +1,5 @@
 .profile-card {
     background-color: #fcfcf9;
-    border: 2px solid #e8e3d3;
 }
 
 .user-avatar {
@@ -28,7 +27,6 @@
 }
 
 .pet-list-card {
-    border: 2px solid #e8e3d3;
     border-radius: 12px;
     background-color: #fffefb;
     padding: 1.25rem 1.5rem;
@@ -40,4 +38,21 @@
     border: 2px dashed #e8e3d3;
     border-radius: 12px;
     padding: 3rem 1rem;
+}
+
+.role-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.3em 0.75em;
+    border-radius: 20px;
+}
+
+.role-owner {
+    background-color: #d6b876;
+    color: #fff;
+}
+
+.role-sitter {
+    background-color: #8fa88e;
+    color: #fff;
 }
