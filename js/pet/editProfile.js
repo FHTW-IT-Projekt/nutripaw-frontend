@@ -3,7 +3,7 @@ const mockApiResponse = {
     status: 200,
     data: {
         pet_id: 1,
-        owner_id: 101, 
+        owner_id: 101,
         name: "Nao",
         species: "Housecat",
         breed: "Domestic Shorthair",
@@ -15,19 +15,34 @@ const mockApiResponse = {
             diagnosis: "Slightly overweight",
             weight: 11.5
         },
-        currentUserRole: "owner" 
+        currentUserRole: "owner"
     }
 };
 
 //initialisation
 document.addEventListener("DOMContentLoaded", () => {
+    let params = new URLSearchParams(document.location.search);
+    let action = params.get("action");
+    if (action === 'add') {
+        handleAddActions();
+        return;
+    }
+
+    //Handle Edit Actions
+    document.getElementById("pet-form").addEventListener("submit", editFormSubmit);
     loadPetData();
 });
+
+function handleAddActions() {
+    const pageTitle = document.getElementById('page-title');
+    pageTitle.textContent = 'Add Pet';
+    document.getElementById("pet-form").addEventListener("submit", addFormSubmit);
+}
 
 function loadPetData() {
     const pet = mockApiResponse.data;
 
-    
+
     if (pet.currentUserRole !== "owner") {
         document.getElementById("edit-pet-form").style.display = "none";
         document.getElementById("error-message").style.display = "block";
@@ -43,20 +58,19 @@ function loadPetData() {
     document.getElementById("age").value = pet.age || "";
     document.getElementById("color").value = pet.color || "";
     document.getElementById("special_features").value = pet.special_features || "";
-    
+
     // Populate joined table data
     if (pet.health_record) {
         document.getElementById("diagnosis").value = pet.health_record.diagnosis || "";
     }
 }
 
-//POST Request
-document.getElementById("edit-pet-form").addEventListener("submit", async (e) => {
+const editFormSubmit = async (e) => {
     e.preventDefault(); // Prevent default page reload
 
     // Gather data
     const formData = new FormData(e.target);
-    
+
     const payload = {
         pet_id: parseInt(formData.get("pet_id")),
         pet_data: {
@@ -87,12 +101,58 @@ document.getElementById("edit-pet-form").addEventListener("submit", async (e) =>
         });
 
         // if (!response.ok) throw new Error('Network response was not ok');
-        
+
         alert("Pet profile updated successfully!");
         // Redirect back to dashboard: window.location.href = '/dashboard';
-        
+
     } catch (error) {
         console.error("Error updating pet profile:", error);
         alert("Simulated Success! (Network fetch failed because /api/pets/update is a placeholder endpoint). Check console for the POST payload.");
     }
-});
+};
+
+const addFormSubmit = async (e) => {
+    e.preventDefault(); // Prevent default page reload
+
+    // Gather data
+    const formData = new FormData(e.target);
+
+    const payload = {
+        pet_id: parseInt(formData.get("pet_id")),
+        pet_data: {
+            name: formData.get("name"),
+            species: formData.get("species"),
+            breed: formData.get("breed"),
+            age: parseFloat(formData.get("age")),
+            color: formData.get("color"),
+            special_features: formData.get("special_features")
+        },
+        health_record_data: {
+            diagnosis: formData.get("diagnosis"),
+            record_date: new Date().toISOString().split('T')[0] //Captures today's date for the record update
+        }
+    };
+
+    console.log("Submitting Payload to Backend:", JSON.stringify(payload, null, 2));
+
+    try {
+        //POST Request
+        const response = await fetch('/api/pets/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // 'Authorization': `Bearer ${userToken}` // Add JWT if applicable
+            },
+            body: JSON.stringify(payload)
+        });
+
+        // if (!response.ok) throw new Error('Network response was not ok');
+
+        alert("Pet profile updated successfully!");
+        // Redirect back to dashboard: window.location.href = '/dashboard';
+
+    } catch (error) {
+        console.error("Error updating pet profile:", error);
+        alert("Simulated Success! (Network fetch failed because /api/pets/update is a placeholder endpoint). Check console for the POST payload.");
+    }
+};

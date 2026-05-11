@@ -13,6 +13,10 @@ async function fetchPetData() {
         const data = await response.json();
 
         // Use the imported function here!
+        const addPetButton = document.createElement('button');
+        addPetButton.innerText = 'Add Pet'
+        const myPetsContainer = document.getElementById('my-pets-container');
+        myPetsContainer.appendChild(addPetButton);
         renderPetCards(data.myPets, 'my-pets-container');
         renderPetCards(data.petsitting, 'petsitting-container');
 
