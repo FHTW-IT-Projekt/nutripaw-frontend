@@ -1,4 +1,4 @@
-import { calculateTimeSince } from './timeUtil.js';
+import { calculateTimeSince } from '../timeUtil.js';
 
 const API = 'http://localhost:3000/api';
 const LOG_KEY = 'nutripaw-feeding-log';

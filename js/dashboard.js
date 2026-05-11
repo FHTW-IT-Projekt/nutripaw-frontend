@@ -1,5 +1,5 @@
 // 1. IMPORT the render function from the components file
-import { renderPetCards, loadFedTodayStatus, renderFeedingLog } from './petComponents.js';
+import { renderPetCards, loadFedTodayStatus, renderFeedingLog } from './pet/petComponents.js';
 
 // Wait for the HTML document to fully load
 document.addEventListener('DOMContentLoaded', () => {
