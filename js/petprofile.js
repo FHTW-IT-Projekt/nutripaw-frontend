@@ -1,11 +1,9 @@
 import { calculateTimeSince } from './timeUtil.js';
 
 const API = 'http://localhost:3000/api';
-
-// Module-level state so edit form always reads from the loaded pet, never from stale dataset
 let currentPet = null;
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
     const petId = params.get('petId');
     const openEdit = params.get('edit') === 'true';
@@ -17,12 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupEditForm(petId);
     setupOwnershipCheck();
-    loadPet(petId, openEdit);
+    await loadPet(petId, openEdit);
 });
 
 async function loadPet(petId, openEdit) {
     try {
-        const res = await fetch(`${API}/pets/${petId}`);
+        const res = await fetch(`${API}/getSampleData`);
         if (!res.ok) throw new Error();
         currentPet = await res.json();
     } catch {
@@ -79,8 +77,11 @@ function openEditModal() {
 
     document.getElementById('edit-pet-name').value = currentPet.name || '';
     document.getElementById('edit-pet-species').value = currentPet.species || '';
+    document.getElementById('edit-pet-race').value = currentPet.race || '';
     document.getElementById('edit-pet-age').value = currentPet.age || '';
-    document.getElementById('edit-pet-weight').value = currentPet.weight || '';
+    document.getElementById('edit-pet-colour').value = currentPet.colour || '';
+    document.getElementById('edit-pet-diagnosis').value = currentPet.diagnosis || '';
+    document.getElementById('edit-pet-behaviour').value = currentPet.behaviour || '';
 
     new bootstrap.Modal(document.getElementById('editPetModal')).show();
 }
@@ -92,8 +93,11 @@ function setupEditForm(petId) {
     document.getElementById('edit-pet-submit').addEventListener('click', async () => {
         const name = document.getElementById('edit-pet-name').value.trim();
         const species = document.getElementById('edit-pet-species').value.trim();
-        const age = document.getElementById('edit-pet-age').value.trim();
-        const weight = document.getElementById('edit-pet-weight').value.trim();
+        const breed = document.getElementById('edit-pet-race').value.trim();
+        const age = parseFloat(document.getElementById('edit-pet-age').value.trim()) || 0;
+        const color = document.getElementById('edit-pet-colour').value.trim();
+        const diagnosis = document.getElementById('edit-pet-diagnosis').value.trim();
+        const behaviour = document.getElementById('edit-pet-behaviour').value.trim();
 
         alertBox.className = 'alert d-none';
 
@@ -103,16 +107,18 @@ function setupEditForm(petId) {
             return;
         }
 
+        const payload = { name, species, breed, age, color, diagnosis, behaviour };
+
         try {
-            const res = await fetch(`${API}/pets/${petId}`, {
-                method: 'PATCH',
+            const res = await fetch(`${API}/petedit/${petId}`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, species, age, weight })
+                body: JSON.stringify(payload)
             });
             if (!res.ok) throw new Error();
 
             bootstrap.Modal.getInstance(modal).hide();
-            loadPet(petId, false);
+            await loadPet(petId, false);
         } catch {
             alertBox.textContent = 'Could not save changes. Please check your connection and try again.';
             alertBox.className = 'alert alert-danger';
