@@ -1,5 +1,4 @@
-import { attachCheckboxListeners, buildTaskRow, buildFedTodayRow, renderFeedingLog, loadFedTodayStatus } from "./petComponents.js";
-
+import { attachCheckboxListeners, buildTaskRow, buildFedTodayRow, renderFeedingLog, loadFedTodayStatus } from "/js/pet/petComponents.js";
 // Wait for the HTML document to fully load
 document.addEventListener('DOMContentLoaded', () => {
     fetchPetData();
@@ -27,40 +26,65 @@ async function fetchPetData() {
 
 export function renderPetProfile(pet, container_id) {
     const container = document.getElementById(container_id);
-    let htmlContent = `  <ul></ul>
-                <li class="list-group-item">
-                    <h5 class="card-subtitle mb-2">Species: </h5>
-                    <p id="species" class="card-text">TextPlaceholder</p>
-                </li> <hr class="ppline">
-                <li class="list-group-item">
-                    <h5 class="card-subtitle mb-2">Age: </h5>
-                    <p id="age" class="card-text">TextPlaceholder</p>
-                </li> <hr class="ppline">
-                <li class="list-group-item">
-                    <h5 class="card-subtitle mb-2">Race: </h5>
-                    <p id="race" class="card-text">TextPlaceholder</p>
-                </li> <hr class="ppline">
-                <li class="list-group-item"> 
-                    <h5 class="card-subtitle mb-2">Colour: </h5>
-                    <p id="colour" class="card-text">TextPlaceholder</p>
-                </li> <hr class="ppline">
-                <li class="list-group-item"> 
-                    <h5 class="card-subtitle mb-2">Gender: </h5>
-                    <p id="gender" cl+ass="card-text">TextPlaceholder</p>
-                </li> <hr class="ppline">
-                <li class="list-group-item"> 
-                    <h5 class="card-subtitle mb-2">Diagnosis: </h5>
-                    <p id="diagnosis" class="card-text">TextPlaceholder</p>
-                </li> <hr class="ppline">
-                <li class="list-group-item"> 
-                    <h5 class="card-subtitle mb-2">Medication: </h5>
-                    <p id="medication" class="card-text">TextPlaceholder</p>
-                </li> <hr class="ppline">
-                <li class="list-group-item"> 
-                    <h5 class="card-subtitle mb-2">Behaviour: </h5>
-                    <p id="behaviour" class="card-text">TextPlaceholder</p>
-                </li>             
-                </ul>`
+    let htmlContent = `    <div class="row">
+                            <!-- Left Column -->
+                            <div class="col-md-4">
+                                <ul class="list-unstyled mb-0">
+                                <li class="list-group-item mt-4">
+                                    <h5 class="card-subtitle mb-2">Species: </h5>
+                                    <p id="species" class="card-text">TextPlaceholder</p>
+                                </li> <hr class="ppline">
+                                <li class="list-group-item mt-4">
+                                    <h5 class="card-subtitle mb-2">Age: </h5>
+                                    <p id="age" class="card-text">TextPlaceholder</p>
+                                </li> <hr class="ppline">
+                                <li class="list-group-item mt-4">
+                                    <h5 class="card-subtitle mb-2">Race: </h5>
+                                    <p id="race" class="card-text">TextPlaceholder</p>
+                                </li> <hr class="ppline">
+                                <li class="list-group-item mt-4"> 
+                                    <h5 class="card-subtitle mb-2">Colour: </h5>
+                                    <p id="colour" class="card-text">TextPlaceholder</p>
+                                </li> <hr class="ppline">
+                                <li class="list-group-item mt-4"> 
+                                    <h5 class="card-subtitle mb-2">Gender: </h5>
+                                    <p id="gender" cl+ass="card-text">TextPlaceholder</p>
+                                </li> <hr class="ppline">
+                                <li class="list-group-item mt-4"> 
+                                    <h5 class="card-subtitle mb-2">Weight: </h5>
+                                    <p id="weight" class="card-text">TextPlaceholder</p>
+                                </li> <hr class="ppline"> 
+                                </ul>
+                            </div>
+                            <!-- right Column -->
+                            <div class="col-md-8">
+                            <ul>
+                                <li class="list-group-item mt-4"> 
+                                    <h5 class="card-subtitle mb-2">Diagnosis: </h5>
+                                    <p id="diagnosis" class="card-text">TextPlaceholder</p>
+                                </li> <hr class="ppline">
+                                <li class="list-group-item mt-4"> 
+                                    <h5 class="card-subtitle mb-2">Medication: </h5>
+                                    <ul>
+                                        <li id="medication" class="card-text">Methylprednisolon | 4ml | 1x/Tag</li>
+                                        <li id="medication" class="card-text">Ominibiotic | 1 Löffel zur Mahlzeit | 2x/Tag</li>
+                                    </ul>
+                                </li> <hr class="ppline">
+                                <li class="list-group-item mt-4"> 
+                                    <h5 class="card-subtitle mb-2">Behaviour: </h5>
+                                    <p id="behaviour" class="card-text">TextPlaceholder</p>
+                                </li> <hr class="ppline"> 
+                                <li class="list-group-item mt-4"> 
+                                    <h5 class="card-subtitle mb-2">Dietary Restrictions: </h5>
+                                    <p id="diet" class="card-text">TextPlaceholder</p>
+                                </li> <hr class="ppline">  
+                                <li class="list-group-item mt-4"> 
+                                    <h5 class="card-subtitle mb-2">Medical Notes: </h5>
+                                    <p id="medicalNotes" class="card-text">TextPlaceholder</p>
+                                </li> <hr class="ppline">
+                                </ul>
+                            </div>
+                        </div> <br>`
         const foodTask = pet.tasks.find(t => t.name === 'Food');
 
         let tasksHtml = "";
