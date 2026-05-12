@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>NutriPaw - Pet Profile</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="/css/global.css">
         <link rel="stylesheet" href="/css/pet/profile.css">
         <link rel="stylesheet" href="/css/navbar.css">
@@ -12,11 +14,21 @@
 
 <div id="navCont"></div>
 
-<div class="petprofile"> 
+<div class="petprofile">
     <div class="container-sm">
+
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <a href="/pages/userprofile.html" class="btn btn-outline-secondary btn-sm">
+                &larr; Back to Profile
+            </a>
+            <button id="edit-pet-btn" class="btn btn-tan btn-sm d-none">Edit Pet</button>
+        </div>
+
         <h1 class="petheading">Petname</h1>
+
         <div class="ppcontent">
             <div class="card" style="width: 90%;">
+<<<<<<< HEAD:pages/pet/profile.html
             <img id ="petprofilepicture" src="/design_elements/raven_pb.jpg" class="card-img-top" alt="raven_pb">
             <div class="card-body">
                 <ul></ul>
@@ -53,14 +65,98 @@
                     <p id="behaviour" class="card-text">TextPlaceholder</p>
                 </li>
                 </ul>
+=======
+                <img id="petprofilepicture" src="../design_elements/raven_pb.jpg" class="card-img-top" alt="pet photo">
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="list-group-item">
+                            <h5 class="card-subtitle mb-2">Species:</h5>
+                            <p id="species" class="card-text">-</p>
+                        </li><hr class="ppline">
+                        <li class="list-group-item">
+                            <h5 class="card-subtitle mb-2">Age:</h5>
+                            <p id="age" class="card-text">-</p>
+                        </li><hr class="ppline">
+                        <li class="list-group-item">
+                            <h5 class="card-subtitle mb-2">Race:</h5>
+                            <p id="race" class="card-text">-</p>
+                        </li><hr class="ppline">
+                        <li class="list-group-item">
+                            <h5 class="card-subtitle mb-2">Colour:</h5>
+                            <p id="colour" class="card-text">-</p>
+                        </li><hr class="ppline">
+                        <li class="list-group-item">
+                            <h5 class="card-subtitle mb-2">Gender:</h5>
+                            <p id="gender" class="card-text">-</p>
+                        </li><hr class="ppline">
+                        <li class="list-group-item">
+                            <h5 class="card-subtitle mb-2">Diagnosis:</h5>
+                            <p id="diagnosis" class="card-text">-</p>
+                        </li><hr class="ppline">
+                        <li class="list-group-item">
+                            <h5 class="card-subtitle mb-2">Medication:</h5>
+                            <p id="medication" class="card-text">-</p>
+                        </li><hr class="ppline">
+                        <li class="list-group-item">
+                            <h5 class="card-subtitle mb-2">Behaviour:</h5>
+                            <p id="behaviour" class="card-text">-</p>
+                        </li>
+                    </ul>
+                </div>
+>>>>>>> feature/logout:pages/petprofile.html
             </div>
-            </div>
-        </div>         
+        </div>
+
     </div>
 </div>
 
+<<<<<<< HEAD:pages/pet/profile.html
 <div id="footerCont"></div>
 <script src="/include/navbar.js"></script>
 <script src="/include/footer.js"></script>
+=======
+<!-- Edit Pet Modal -->
+<div class="modal fade" id="editPetModal" tabindex="-1" aria-labelledby="editPetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPetModalLabel">Edit Pet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-pet-form" novalidate>
+                    <div class="mb-3">
+                        <label for="edit-pet-name" class="form-label">Pet Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit-pet-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-pet-species" class="form-label">Species <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit-pet-species" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-pet-age" class="form-label">Age</label>
+                        <input type="text" class="form-control" id="edit-pet-age" placeholder="e.g. 3 yrs. old">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-pet-weight" class="form-label">Weight</label>
+                        <input type="text" class="form-control" id="edit-pet-weight" placeholder="e.g. 4.5 kg">
+                    </div>
+                </form>
+                <div id="edit-pet-alert" class="alert d-none" role="alert"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-tan" id="edit-pet-submit">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<script src="/include/navbar.js"></script>
+<script src="/include/footer.js"></script>
+<script type="module" src="/js/petprofile.js"></script>
+
+>>>>>>> feature/logout:pages/petprofile.html
 </body>
 </html>

@@ -1,29 +1,41 @@
+const API = 'http://localhost:3000/api';
+
 const container = document.getElementById('navCont');
 
 const navLinks = [
-    {name: 'Home', link:'/index.html'},
+    {name: 'Home', link:'/pages/user.html'},
     {name: 'About us', link: '/pages/aboutus.html'},
-    {name: 'Sign In / Sign Up', link: '/pages/login.html'}
+    {name: 'Login', link: '/pages/login.html'}
 ];
 
 //Notiz: Logo click -> eingeloggt user dashboard, nicht eingeloggt homepage
 
 
 let linksHtml = '';
-for(const item of navLinks){
-    // Bootstrap Klassen: nav-item und nav-link
+for (const item of staticLinks) {
     linksHtml += `
         <li class="nav-item">
             <a class="nav-link text-dark" href="${item.link}">${item.name}</a>
         </li>`;
 }
 
+if (isLoggedIn) {
+    linksHtml += `
+        <li class="nav-item">
+            <button class="btn btn-link nav-link text-dark" id="logout-btn">Logout</button>
+        </li>`;
+} else {
+    linksHtml += `
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="/pages/login.html">Login</a>
+        </li>`;
+}
 
 const navbarHtml = `
 <div class="container mt-3">
     <nav class="navbar navbar-expand-lg bg-white shadow-sm rounded-4 px-3">
         <div class="container-fluid">
-           
+
             <div class="d-flex align-items-center">
                 <a href="/index.html"><img src="/img/logo-png-transparent-smaller.png" alt="NutriPaw Logo" class="me-3" style="height: 40px; width: auto;"></a>
                 <span class="fw-bold fst-italic fs-4">NutriPaw</span>
@@ -32,7 +44,7 @@ const navbarHtml = `
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     ${linksHtml}
@@ -40,9 +52,27 @@ const navbarHtml = `
             </div>
         </div>
     </nav>
- </div>    
+ </div>
 `;
 
-if(container) {
+if (container) {
     container.innerHTML = navbarHtml;
-} else {console.error("Container nicht gefunden!")}
+
+    if (isLoggedIn) {
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await fetch(`${API}/auth/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            } catch {
+                // proceed with local logout even if backend call fails
+            }
+
+            sessionStorage.removeItem('nutripaw_user');
+            window.location.href = '/pages/login.html';
+        });
+    }
+} else {
+    console.error("Container nicht gefunden!");
+}
