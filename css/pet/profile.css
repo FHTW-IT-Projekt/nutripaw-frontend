@@ -1,0 +1,72 @@
+html
+{
+    min-height: 100%;
+}
+body
+{
+    background: linear-gradient(#C7DCB9, #DBD1B1);
+}
+
+/*Text von landing page und about us*/
+.petprofile
+{
+    margin:  4%;
+    margin-left:10%;
+    margin-right: 10%;
+    margin-bottom: 4%;
+    padding:2%;
+    background-color: rgb(255, 255, 255, 0.6);
+    border-radius:20px;
+    text-align: left;
+    min-height: 100vH;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: larger;
+    display: flex;
+}
+
+.petheading
+{
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-style: italic;
+    color: #988753;
+}
+
+.ppcontent .card
+{
+    border-style: solid;
+    border-color: #DBD1B1;
+    border-radius: 15px;
+    border-width: 2px;
+    background-color: rgb(255, 255, 255, 0.6);
+    --bs-list-group-color: #DBD1B1;
+
+}
+
+
+
+.ppcontent
+{
+    padding: 10px;;
+}
+.ppcontent img
+{
+    max-width: 30%;
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+    padding: 2px;
+}
+hr{
+  
+    margin: 0 auto;
+    height: 2px;
+    border: none;
+    background-color:#DBD1B1;
+}
+
+.card h5
+{
+    color: #988753;
+    font-weight: bold;
+}

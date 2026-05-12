@@ -1,0 +1,19 @@
+:root {
+    --bg-color: #f2f4ea;
+    --card-bg: #ffffff;
+    --text-main: #6b5b43;
+    --btn-bg: #c9b485;
+    --btn-hover: #b5a071;
+    --border-color: #e3e0d8;
+}
+
+/* Custom override for your brand color */
+.btn-primary {
+    background-color: var(--btn-bg) !important;
+    border-color: var(--btn-bg) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--btn-hover) !important;
+    border-color: var(--btn-hover) !important;
+}
