@@ -8,7 +8,7 @@
     <!-- <link href="styles.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/user.css">
-    <link rel="stylesheet" href="/css/feeding.css">
+    <link rel="stylesheet" href="/css/pet/feeding.css">
     <link rel="stylesheet" href="/include/navbar.css">
     <link rel="stylesheet" href="/include/footer.css">
 
@@ -19,8 +19,11 @@
     <main class="container my-5 dashboard-wrapper p-4 rounded-4 shadow-sm">
         
         <h2 class="text-center section-title mb-4">My Pets</h2>
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-success ms-auto mb-2" href="/pages/pet/editProfile.html?action=add">Add Pet</a>
+        </div>
         <div id="my-pets-container">
-            </div>
+        </div>
 
         <div class="my-5"></div>
 
@@ -42,10 +45,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/include/navbar.js"></script>
     <script src="/include/footer.js"></script>
-    <script src="/js/testFetch.js"></script>
     <script type="module" src="/js/timeUtil.js"></script>
     <script type="module" src="/js/dashboard.js"></script>
-    <script type="module" src="/js/petComponents.js"></script>
+    <script type="module" src="/js/pet/petComponents.js"></script>
     <script type="module" src="/js/feeding.js"></script>
 
 </body>
