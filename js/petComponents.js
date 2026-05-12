@@ -53,7 +53,7 @@ export function renderPetCards(petsArray, containerId) {
     attachCheckboxListeners();
 }
 
-function buildFedTodayRow(petId, petName, foodTask) {
+export function buildFedTodayRow(petId, petName, foodTask) {
     if (!foodTask) return '';
     const timeSinceString = calculateTimeSince(foodTask.lastCompletedTime);
     const cbId = `fed-${petId}-${foodTask.taskId}-fedtoday`;
@@ -76,7 +76,7 @@ function buildFedTodayRow(petId, petName, foodTask) {
     `;
 }
 
-function buildTaskRow(petId, petName, task) {
+export function buildTaskRow(petId, petName, task) {
     let scheduleHtml = "";
     task.schedule.forEach(time => {
         const cbId = `fed-${petId}-${task.taskId}-${time.replace(' ', '')}`;
@@ -119,7 +119,7 @@ function buildTaskRow(petId, petName, task) {
     `;
 }
 
-function attachCheckboxListeners() {
+export function attachCheckboxListeners() {
     document.querySelectorAll('.feeding-checkbox').forEach(cb => {
         cb.addEventListener('change', onCheckboxChange);
     });

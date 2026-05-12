@@ -14,11 +14,11 @@
 
 <div class="petprofile"> 
     <div class="container-sm">
-        <h1 class="petheading">Petname</h1>
+        <h1 class="petheading" id="petname">Petname</h1>
         <div class="ppcontent">
             <div class="card" style="width: 90%;">
             <img id ="petprofilepicture" src="../design_elements/raven_pb.jpg" class="card-img-top" alt="raven_pb">
-            <div class="card-body">
+            <div class="card-body"  id="pet_profile_content">
                 <ul></ul>
                 <li class="list-group-item">
                     <h5 class="card-subtitle mb-2">Species: </h5>
@@ -51,7 +51,7 @@
                 <li class="list-group-item"> 
                     <h5 class="card-subtitle mb-2">Behaviour: </h5>
                     <p id="behaviour" class="card-text">TextPlaceholder</p>
-                </li>
+                </li>             
                 </ul>
             </div>
             </div>
@@ -62,7 +62,8 @@
 <div id="footerCont"></div>
 <script src="/include/navbar.js"></script>
 <script src="/include/footer.js"></script>
-<script src="/js/testFetch.js">
-</script>
+<script src="/js/testFetch.js"></script>
+<script type="module" src="/js/timeUtil.js"></script>
+<script type="module" src="/js/petProfile.js"></script>
 </body>
 </html>
