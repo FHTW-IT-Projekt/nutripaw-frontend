@@ -2,17 +2,17 @@ const API = 'http://localhost:3000/api';
 
 const container = document.getElementById('navCont');
 
+const isLoggedIn = !!sessionStorage.getItem('nutripaw_user');
+
 const navLinks = [
-    {name: 'Home', link:'/pages/user.html'},
+    {name: 'Home', link: '/pages/user.html'},
     {name: 'About us', link: '/pages/aboutus.html'},
-    {name: 'Login', link: '/pages/login.html'}
 ];
 
 //Notiz: Logo click -> eingeloggt user dashboard, nicht eingeloggt homepage
 
-
 let linksHtml = '';
-for (const item of staticLinks) {
+for (const item of navLinks) {
     linksHtml += `
         <li class="nav-item">
             <a class="nav-link text-dark" href="${item.link}">${item.name}</a>
@@ -52,7 +52,7 @@ const navbarHtml = `
             </div>
         </div>
     </nav>
- </div>
+</div>
 `;
 
 if (container) {
@@ -68,7 +68,6 @@ if (container) {
             } catch {
                 // proceed with local logout even if backend call fails
             }
-
             sessionStorage.removeItem('nutripaw_user');
             window.location.href = '/pages/login.html';
         });
