@@ -1,4 +1,4 @@
-import { calculateTimeSince } from './timeUtil.js';
+import { calculateTimeSince } from '../timeUtil.js';
 
 const API = 'http://localhost:3000/api';
 const LOG_KEY = 'nutripaw-feeding-log';
@@ -113,7 +113,7 @@ function buildTaskRow(petId, petName, task) {
                 <span class="time-since-text ms-2" id="last-${petId}-${task.taskId}">
                     | last: ${timeSinceString}
                 </span>
-                <button class="btn btn-outline-warning btn-sm ms-auto">Edit</button>
+                <a class="btn btn-outline-warning btn-sm ms-auto" href="/pages/pet/profile.html">Edit</a>
             </div>
         </div>
     `;

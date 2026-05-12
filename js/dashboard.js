@@ -1,5 +1,5 @@
 // 1. IMPORT the render function from the components file
-import { renderPetCards, loadFedTodayStatus, renderFeedingLog } from './petComponents.js';
+import { renderPetCards, loadFedTodayStatus, renderFeedingLog } from './pet/petComponents.js';
 
 // Wait for the HTML document to fully load
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,6 +13,10 @@ async function fetchPetData() {
         const data = await response.json();
 
         // Use the imported function here!
+        const addPetButton = document.createElement('button');
+        addPetButton.innerText = 'Add Pet'
+        const myPetsContainer = document.getElementById('my-pets-container');
+        myPetsContainer.appendChild(addPetButton);
         renderPetCards(data.myPets, 'my-pets-container');
         renderPetCards(data.petsitting, 'petsitting-container');
 
