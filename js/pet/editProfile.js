@@ -1,47 +1,54 @@
-// Dummy JSON Data
+// Dummy JSON Data (Angepasst an die gewünschte Reihenfolge und Struktur)
 const mockApiResponse = {
     status: 200,
     data: {
         pet_id: 1,
         owner_id: 101,
+        currentUserRole: "owner",
+        
+        // Tierstammdaten
         name: "Nao",
         species: "Housecat",
         breed: "Domestic Shorthair",
         age: 7,
         color: "Brown Tabby",
-        profile_image: "nao.jpg",
-        special_features: "Very vocal when hungry. Sleeps all day.",
+        gender: "Male",
+        weight: 11.5,
+        
+        // Medizinische & Verhaltensdaten
         health_record: {
             diagnosis: "Slightly overweight",
-            weight: 11.5
-        },
-        currentUserRole: "owner"
+            medication: "None",
+            behaviour: "Very vocal when hungry. Sleeps all day.",
+            dietaryRestrictions: "Strict feeding schedule, measured portions",
+            medicalNotes: "Check dental health at next routine visit"
+        }
     }
 };
 
-//initialisation
+// Initialisation
 document.addEventListener("DOMContentLoaded", () => {
     let params = new URLSearchParams(document.location.search);
     let action = params.get("action");
+    
     if (action === 'add') {
         handleAddActions();
         return;
     }
 
-    //Handle Edit Actions
+    // Handle Edit Actions
     document.getElementById("pet-form").addEventListener("submit", editFormSubmit);
     loadPetData();
 });
 
 function handleAddActions() {
     const pageTitle = document.getElementById('page-title');
-    pageTitle.textContent = 'Add Pet';
+    if (pageTitle) pageTitle.textContent = 'Add Pet';
     document.getElementById("pet-form").addEventListener("submit", addFormSubmit);
 }
 
 function loadPetData() {
     const pet = mockApiResponse.data;
-
 
     if (pet.currentUserRole !== "owner") {
         document.getElementById("edit-pet-form").style.display = "none";
@@ -50,109 +57,94 @@ function loadPetData() {
         return;
     }
 
-    //fill out the form with existing DB data as placeholders
-    document.getElementById("pet_id").value = pet.pet_id;
+    // Formularfelder mit bestehenden DB-Daten befüllen (in gewünschter Reihenfolge)
+    if (document.getElementById("pet_id")) document.getElementById("pet_id").value = pet.pet_id;
+    
     document.getElementById("name").value = pet.name || "";
     document.getElementById("species").value = pet.species || "";
     document.getElementById("breed").value = pet.breed || "";
     document.getElementById("age").value = pet.age || "";
     document.getElementById("color").value = pet.color || "";
-    document.getElementById("special_features").value = pet.special_features || "";
+    document.getElementById("gender").value = pet.gender || "";
+    document.getElementById("weight").value = pet.weight || "";
 
-    // Populate joined table data
+    // Verschachtelte Daten aus dem health_record befüllen
     if (pet.health_record) {
         document.getElementById("diagnosis").value = pet.health_record.diagnosis || "";
+        document.getElementById("medication").value = pet.health_record.medication || "";
+        document.getElementById("behaviour").value = pet.health_record.behaviour || "";
+        document.getElementById("dietaryRestrictions").value = pet.health_record.dietaryRestrictions || "";
+        document.getElementById("medicalNotes").value = pet.health_record.medicalNotes || "";
     }
 }
 
-const editFormSubmit = async (e) => {
-    e.preventDefault(); // Prevent default page reload
-
-    // Gather data
-    const formData = new FormData(e.target);
-
-    const payload = {
-        pet_id: parseInt(formData.get("pet_id")),
+// Hilfsfunktion zum sauberen Auslesen und Strukturieren der Formulardaten
+function buildPayload(formData) {
+    const petIdVal = formData.get("pet_id");
+    
+    return {
+        pet_id: petIdVal ? parseInt(petIdVal) : null, // Bei 'add' eventuell noch nicht vorhanden
         pet_data: {
             name: formData.get("name"),
             species: formData.get("species"),
             breed: formData.get("breed"),
             age: parseFloat(formData.get("age")),
             color: formData.get("color"),
-            special_features: formData.get("special_features")
+            gender: formData.get("gender"),
+            weight: parseFloat(formData.get("weight"))
         },
         health_record_data: {
             diagnosis: formData.get("diagnosis"),
-            record_date: new Date().toISOString().split('T')[0] //Captures today's date for the record update
+            medication: formData.get("medication"),
+            behaviour: formData.get("behaviour"),
+            dietaryRestrictions: formData.get("dietaryRestrictions"),
+            medicalNotes: formData.get("medicalNotes"),
+            record_date: new Date().toISOString().split('T')[0] // Aktuelles Datum
         }
     };
+}
 
-    console.log("Submitting Payload to Backend:", JSON.stringify(payload, null, 2));
+const editFormSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const payload = buildPayload(formData);
+
+    console.log("Submitting Update Payload to Backend:", JSON.stringify(payload, null, 2));
 
     try {
-        //POST Request
         const response = await fetch('/api/pets/update', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // 'Authorization': `Bearer ${userToken}` // Add JWT if applicable
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        // if (!response.ok) throw new Error('Network response was not ok');
-
         alert("Pet profile updated successfully!");
-        // Redirect back to dashboard: window.location.href = '/dashboard';
-
     } catch (error) {
         console.error("Error updating pet profile:", error);
-        alert("Simulated Success! (Network fetch failed because /api/pets/update is a placeholder endpoint). Check console for the POST payload.");
+        alert("Simulated Success! Check console for the POST payload.");
     }
 };
 
 const addFormSubmit = async (e) => {
-    e.preventDefault(); // Prevent default page reload
+    e.preventDefault();
 
-    // Gather data
     const formData = new FormData(e.target);
+    const payload = buildPayload(formData);
 
-    const payload = {
-        pet_id: parseInt(formData.get("pet_id")),
-        pet_data: {
-            name: formData.get("name"),
-            species: formData.get("species"),
-            breed: formData.get("breed"),
-            age: parseFloat(formData.get("age")),
-            color: formData.get("color"),
-            special_features: formData.get("special_features")
-        },
-        health_record_data: {
-            diagnosis: formData.get("diagnosis"),
-            record_date: new Date().toISOString().split('T')[0] //Captures today's date for the record update
-        }
-    };
-
-    console.log("Submitting Payload to Backend:", JSON.stringify(payload, null, 2));
+    console.log("Submitting Create Payload to Backend:", JSON.stringify(payload, null, 2));
 
     try {
-        //POST Request
-        const response = await fetch('/api/pets/update', {
+        // Endpunkt für das Erstellen eines neuen Datensatzes
+        const response = await fetch('/api/pets/create', { 
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // 'Authorization': `Bearer ${userToken}` // Add JWT if applicable
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        // if (!response.ok) throw new Error('Network response was not ok');
-
-        alert("Pet profile updated successfully!");
-        // Redirect back to dashboard: window.location.href = '/dashboard';
-
+        alert("Pet profile added successfully!");
     } catch (error) {
-        console.error("Error updating pet profile:", error);
-        alert("Simulated Success! (Network fetch failed because /api/pets/update is a placeholder endpoint). Check console for the POST payload.");
+        console.error("Error adding pet profile:", error);
+        alert("Simulated Success! Check console for the POST payload.");
     }
 };

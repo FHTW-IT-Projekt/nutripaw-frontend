@@ -96,8 +96,13 @@ function setupEditForm(petId) {
         const breed = document.getElementById('edit-pet-race').value.trim();
         const age = parseFloat(document.getElementById('edit-pet-age').value.trim()) || 0;
         const color = document.getElementById('edit-pet-colour').value.trim();
+        const gender = document.getElementById('edit-pet-gender').value.trim();
+        const weight = document.getElementById('edit-pet-weight').value.trim();
         const diagnosis = document.getElementById('edit-pet-diagnosis').value.trim();
+        const medication = document.getElementById('edit-pet-medication').value.trim();
         const behaviour = document.getElementById('edit-pet-behaviour').value.trim();
+        const dietaryRestrictions = document.getElementById('edit-pet-dietary').value.trim();
+        const medicalNotes = document.getElementById('edit-pet-medical').value.trim();
 
         alertBox.className = 'alert d-none';
 
