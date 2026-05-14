@@ -5,7 +5,7 @@ const container = document.getElementById('navCont');
 const isLoggedIn = !!sessionStorage.getItem('nutripaw_user');
 
 const navLinks = [
-    {name: 'Home', link: '/pages/user.html'},
+    {name: 'Home', link: '/index.html'},
     {name: 'About us', link: '/pages/aboutus.html'},
 ];
 
