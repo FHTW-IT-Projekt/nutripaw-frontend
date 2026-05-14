@@ -188,7 +188,7 @@ function renderPetList(pets, container) {
                     </p>
                 </div>
                 <div class="col-auto d-flex flex-column flex-sm-row gap-2">
-                    <a href="/pages/petprofile.html?petId=${pet.petId}" class="btn btn-tan btn-sm">
+                    <a href="/pages/pet/profile.html?petId=${pet.petId}" class="btn btn-tan btn-sm">
                         View Pet Profile
                     </a>
                     <button class="btn btn-outline-secondary btn-sm" data-edit-pet="${pet.petId}">
