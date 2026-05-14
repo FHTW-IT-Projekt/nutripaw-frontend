@@ -19,7 +19,7 @@ function setDefaultDateTime() {
 async function loadPets() {
     const select = document.getElementById('pet-select');
     try {
-        const res = await fetch(`${API}/pets`);
+        const res = await fetch(`${API}/pets`, { credentials: 'include' });
         const pets = await res.json();
         pets.forEach(pet => {
             const opt = document.createElement('option');
@@ -44,7 +44,7 @@ async function onPetChange() {
     }
 
     try {
-        const res = await fetch(`${API}/pets/${petId}/medications`);
+        const res = await fetch(`${API}/pets/${petId}/medications`, { credentials: 'include' });
         const meds = await res.json();
 
         if (meds.length === 0) {
@@ -86,6 +86,7 @@ async function onSubmit(e) {
         // Fütterungseintrag speichern
         const feedRes = await fetch(`${API}/food-entries`, {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 pet_id: petId,
@@ -103,6 +104,7 @@ async function onSubmit(e) {
         for (const cb of checkedMeds) {
             await fetch(`${API}/medication-logs`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     medication_id: cb.dataset.medId,
@@ -134,7 +136,7 @@ async function onSubmit(e) {
 async function loadFeedingLog() {
     const tbody = document.getElementById('feeding-tbody');
     try {
-        const res = await fetch(`${API}/food-entries`);
+        const res = await fetch(`${API}/food-entries`, { credentials: 'include' });
         const entries = await res.json();
 
         if (entries.length === 0) {
@@ -159,7 +161,7 @@ async function loadFeedingLog() {
 async function loadMedicationLog() {
     const tbody = document.getElementById('med-tbody');
     try {
-        const res = await fetch(`${API}/medication-logs`);
+        const res = await fetch(`${API}/medication-logs`, { credentials: 'include' });
         const logs = await res.json();
 
         if (logs.length === 0) {
