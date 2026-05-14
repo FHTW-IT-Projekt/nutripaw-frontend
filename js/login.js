@@ -42,6 +42,7 @@ form.addEventListener('submit', async (e) => {
             return;
         }
 
+        sessionStorage.setItem('nutripaw_user', JSON.stringify(data));
         window.location.href = '/pages/user.html';
 
     } catch {

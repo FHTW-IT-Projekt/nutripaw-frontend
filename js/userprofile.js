@@ -206,7 +206,7 @@ function renderPetList(pets, container) {
     container.addEventListener('click', e => {
         const editBtn = e.target.closest('[data-edit-pet]');
         if (editBtn) {
-            window.location.href = `/pages/pet/profile.html?petId=${editBtn.dataset.editPet}&edit=true`;
+            window.location.href = `/pages/pet/editProfile.html?petId=${editBtn.dataset.editPet}`;
         }
     });
 }
