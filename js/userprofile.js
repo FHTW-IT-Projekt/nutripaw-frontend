@@ -188,7 +188,7 @@ function renderPetList(pets, container) {
                     </p>
                 </div>
                 <div class="col-auto d-flex flex-column flex-sm-row gap-2">
-                    <a href="/pages/pet/profile.html?petId=${pet.petId}" class="btn btn-tan btn-sm">
+                    <a href="/pages/petprofile.html?petId=${pet.petId}" class="btn btn-tan btn-sm">
                         View Pet Profile
                     </a>
                     <button class="btn btn-outline-secondary btn-sm" data-edit-pet="${pet.petId}">
@@ -206,7 +206,7 @@ function renderPetList(pets, container) {
     container.addEventListener('click', e => {
         const editBtn = e.target.closest('[data-edit-pet]');
         if (editBtn) {
-            window.location.href = `/pages/pet/profile.html?petId=${editBtn.dataset.editPet}&edit=true`;
+            window.location.href = `/pages/pet/editProfile.html?petId=${editBtn.dataset.editPet}`;
         }
     });
 }
