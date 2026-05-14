@@ -29,9 +29,10 @@ hideSuccess();
 
 const formData = new FormData(form);
 const data = Object.fromEntries(formData.entries());
-
-try{
-    const response = await fetch('http://127.0.0.1:3000/api/register', 
+console.log("before try");
+try{        
+    console.log("during try");
+    const response = await fetch('http://127.0.0.1:3000/api/auth/register', 
         {
             method: 'POST',
             headers: {
@@ -43,6 +44,7 @@ try{
     const result = await response.json().catch(()=> ({}));
     if(response.ok)
     {
+        console.log("if response.ok");
         form.reset(); //nur bei Erfolg wird das Formular geleert
         showSuccess("Registration successful!");
         return result;
