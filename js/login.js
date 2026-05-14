@@ -1,5 +1,5 @@
 
-const API = 'http://127.0.0.1:3000/api';
+const LOGIN_API = 'http://127.0.0.1:3000/api';
 
 const form = document.getElementById('login-form');
 const alertBox = document.getElementById('login-alert');
@@ -25,7 +25,7 @@ form.addEventListener('submit', async (e) => {
     loginBtn.textContent = 'Anmelden...';
 
     try {
-        const res = await fetch(`${API}/auth/login`, {
+        const res = await fetch(`${LOGIN_API}/auth/login`, {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
