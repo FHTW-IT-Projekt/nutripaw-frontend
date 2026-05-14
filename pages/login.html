@@ -20,6 +20,8 @@
         <div class="text-center mb-4">
             <img src="/img/logo-png-transparent-smaller.png" alt="NutriPaw Logo" class="login-logo mb-2">
             <h1 class="login-title">Sign In</h1>
+
+            <h1 class="login-title">Login</h1>
         </div>
 
         <div id="login-alert" class="alert alert-danger d-none" role="alert"></div>
@@ -33,6 +35,8 @@
             <div class="mb-3">
                 <label for="password" class="form-label fw-semibold">Password</label>
                 <input type="password" class="form-control" id="password" placeholder="Enter password" required autocomplete="current-password">
+
+                <input type="password" class="form-control" id="password" placeholder="enter your password" required autocomplete="current-password">
             </div>
 
             <div class="mb-4 d-flex justify-content-between align-items-center">
@@ -45,6 +49,13 @@
 
             <button type="submit" class="btn btn-tan w-100 py-2 fw-bold" id="login-btn">
                 Sign In
+                    <label class="form-check-label text-muted small" for="rememberMe">Stay logged in?</label>
+                </div>
+                <a href="#" class="text-muted small login-link">Forgot the password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-tan w-100 py-2 fw-bold" id="login-btn">
+                Login
             </button>
         </form>
 
@@ -53,6 +64,8 @@
         <p class="text-center text-muted small mb-0">
             Don't have an account?
             <a href="/pages/register.html" class="login-link fw-semibold">Register now</a>
+            Need an account?
+            <a href="/pages/register.html" class="login-link fw-semibold">Register now!</a>
         </p>
     </div>
 </main>
