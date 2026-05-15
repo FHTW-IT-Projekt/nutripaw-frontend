@@ -135,7 +135,7 @@ export async function loadFeedingLog() {
         const entries = await res.json();
 
         if (entries.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Noch keine Einträge.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No entries today.</td></tr>';
             return;
         }
 
@@ -149,7 +149,7 @@ export async function loadFeedingLog() {
             </tr>
         `).join('');
     } catch {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Backend nicht erreichbar.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Server cannot be reached.</td></tr>';
     }
 }
 
@@ -160,7 +160,7 @@ export async function loadMedicationLog() {
         const logs = await res.json();
 
         if (logs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Noch keine Einträge.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No entries today.</td></tr>';
             return;
         }
 
