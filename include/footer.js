@@ -11,13 +11,13 @@ const footerHtml = `
             </div>
 
             <div class="col-md-4 text-center text-muted small">
-                &copy; 2026 NutriPaw Team. Alle Pfoten vorbehalten.
+                &copy; 2026 NutriPaw Team. All paws reserved.
             </div>
 
            
             <div class="col-md-4 text-center text-md-end">
-                <a href="#" class="text-decoration-none text-dark me-3 small">Impressum</a>
-                <a href="#" class="text-decoration-none text-dark small">Datenschutz</a>
+                <a href="#" class="text-decoration-none text-dark me-3 small">Legal Notice</a>
+                <a href="#" class="text-decoration-none text-dark small">Privacy Policy</a>
             </div>
         </div>
     </div>

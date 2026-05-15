@@ -43,7 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function handleAddActions() {
     const pageTitle = document.getElementById('page-title');
-    if (pageTitle) pageTitle.textContent = 'Add Pet';
+    const saveButton = document.getElementById('profile-save-btn');
+
+    if (pageTitle) {
+        pageTitle.textContent = 'Create new pet';
+    }
+    
+    if (saveButton) {
+        saveButton.textContent = 'Create pet';
+    }
+
     document.getElementById("pet-form").addEventListener("submit", addFormSubmit);
 }
 
