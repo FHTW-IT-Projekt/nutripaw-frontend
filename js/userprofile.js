@@ -72,7 +72,9 @@ function setupEditProfileForm() {
         document.getElementById('edit-role').value = currentUser.role || 'owner';
 
         alertBox.className = 'alert d-none';
-        new bootstrap.Modal(modal).show();
+        document.activeElement.blur();
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modal);
+        modalInstance.show();
     });
 
     document.getElementById('edit-profile-submit').addEventListener('click', async () => {
@@ -96,8 +98,10 @@ function setupEditProfileForm() {
         }
 
         try {
+            console.log('currentUser:', currentUser);
+             console.log('userId:', currentUser?.userId);
             const res = await fetch(`${API}/users/${currentUser.userId}`, {
-                method: 'PATCH',
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ firstname, lastname, email, role })
             });
@@ -106,6 +110,7 @@ function setupEditProfileForm() {
             const updated = await res.json().catch(() => null);
             currentUser = {
                 ...currentUser,
+                userId: updated?.userId || currentUser.userId,
                 firstname,
                 lastname,
                 name: updated?.name || `${firstname} ${lastname}`,
@@ -120,6 +125,7 @@ function setupEditProfileForm() {
             sessionStorage.setItem('nutripaw_user', JSON.stringify(session));
 
             bootstrap.Modal.getInstance(modal).hide();
+            document.activeElement.blur();
             renderUserInfo(currentUser);
 
             const profileAlert = document.getElementById('profile-alert');
