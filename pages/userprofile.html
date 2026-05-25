@@ -18,7 +18,8 @@
         <div class="profile-card rounded-4 shadow-sm p-4 mb-5">
             <div class="d-flex align-items-center justify-content-between gap-4 flex-wrap">
                 <div class="d-flex align-items-center gap-4">
-                    <div class="user-avatar">
+                    <div class="user-avatar" id="user-avatar-wrapper">
+                        <img id="user-avatar-img" alt="Profile photo" class="user-avatar-img d-none">
                         <span id="user-initials">?</span>
                     </div>
                     <div>
@@ -93,6 +94,15 @@
                 </div>
                 <div class="modal-body">
                     <form id="edit-profile-form" novalidate>
+                        <div class="mb-4 text-center">
+                            <div class="avatar-preview-circle mx-auto mb-2">
+                                <img id="modal-avatar-img" alt="Profile photo" class="d-none">
+                                <span id="modal-avatar-initials"></span>
+                            </div>
+                            <label for="edit-profile-image" class="btn btn-outline-secondary btn-sm">Change Photo</label>
+                            <input type="file" id="edit-profile-image" accept=".jpg,.jpeg,.png" class="d-none">
+                            <p class="form-text mb-0">Accepted formats: JPG, JPEG, PNG.</p>
+                        </div>
                         <div class="mb-3">
                             <label for="edit-firstname" class="form-label">First Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="edit-firstname" required>
