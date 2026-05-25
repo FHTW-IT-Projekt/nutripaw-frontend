@@ -1,4 +1,4 @@
-// Dummy JSON Data
+// Dummy data used while backend is unavailable
 const mockApiResponse = {
     status: 200,
     data: {
@@ -23,16 +23,11 @@ const mockApiResponse = {
             { description: 'Raw Fish abc abc' },
         ],
         medical_notes: [
-            {date: '20-03-2026', description: 'Scratching ear'},
-            {date: '20-02-2026', description: 'Constipated for 3 days'},
-            {date: '20-01-2026', description: 'Ate garlic and onions'},
+            { date: '20-03-2026', description: 'Scratching ear' },
+            { date: '20-02-2026', description: 'Constipated for 3 days' },
+            { date: '20-01-2026', description: 'Ate garlic and onions' },
         ],
-        behavior: [
-            'Skitish',
-            'Cuddly',
-            'Scratchy',
-            'Food Motivated'
-        ],
+        behavior: ['Skitish', 'Cuddly', 'Scratchy', 'Food Motivated'],
         weight_changes: [
             { date: '20-12-2025', weight: '3.2kg', change: '----' },
             { date: '20-01-2026', weight: '3.6kg', change: '+0.4g' },
@@ -43,11 +38,9 @@ const mockApiResponse = {
     }
 };
 
-//initialisation
-document.addEventListener("DOMContentLoaded", () => {
-    fillData()
+document.addEventListener('DOMContentLoaded', () => {
+    fillData();
 });
-
 
 function fillData() {
     const data = mockApiResponse.data;
@@ -62,36 +55,21 @@ function fillData() {
     document.getElementById('castrated').textContent = data.castrated ? 'Yes' : 'No';
 
     const populateList = (elementId, array, formatter) => {
-        const listElement = document.getElementById(elementId);
-        if (listElement && array.length) {
-            listElement.innerHTML = ''; // Clear placeholders
+        const el = document.getElementById(elementId);
+        if (el && array.length) {
+            el.innerHTML = '';
             array.forEach(item => {
                 const li = document.createElement('li');
                 li.textContent = formatter(item);
-                listElement.appendChild(li);
+                el.appendChild(li);
             });
         }
     };
 
-    populateList('diagnosis', data.diagnosis, (item) => 
-        `${item.description} (Date: ${item.date})`
-    );
-
-    populateList('diet', data.dietary_restrictions, (item) => 
-        item.description
-    );
-
-    populateList('medication', data.medicine, (item) => 
-        `${item.name} - ${item.dosage} - ${item.daily_frequency}x daily`
-    );
-
-    populateList('behaviour', data.behavior, (item) => item);
-
-    populateList('weight-changes', data.weight_changes, (item) => 
-        `${item.date} || ${item.weight} || ${item.change}`
-    );
-
-    populateList('medical-notes', data.medical_notes, (item) => 
-        `${item.date}: ${item.description}`
-    );
+    populateList('diagnosis', data.diagnosis, item => `${item.description} (Date: ${item.date})`);
+    populateList('diet', data.dietary_restrictions, item => item.description);
+    populateList('medication', data.medicine, item => `${item.name} - ${item.dosage} - ${item.daily_frequency}x daily`);
+    populateList('behaviour', data.behavior, item => item);
+    populateList('weight-changes', data.weight_changes, item => `${item.date} || ${item.weight} || ${item.change}`);
+    populateList('medical-notes', data.medical_notes, item => `${item.date}: ${item.description}`);
 }

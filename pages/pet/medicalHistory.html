@@ -9,6 +9,7 @@
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/pet/profile.css">
+    <link rel="stylesheet" href="/css/pet/medicalHistory.css">
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/footer.css">
 </head>
@@ -18,11 +19,12 @@
     <div id="navCont"></div>
 
     <div class="petprofile">
-        <div class="container-sm">
+        <div class="container-sm w-100">
             <h1 class="petheading" id="pet-name">Petname</h1>
+
+            <!-- Pet Info Card -->
             <div class="ppcontent">
                 <div class="card" style="width: 90%;">
-                    <!--<img id ="petprofilepicture" src="../../design_elements/raven_pb.jpg" class="card-img-top" alt="raven_pb">-->
                     <div class="card-body">
                         <div class="row">
                             <!-- Left Column -->
@@ -50,14 +52,12 @@
                                     <hr class="ppline">
                                     <li class="list-group-item mt-4">
                                         <h5 class="card-subtitle mb-2">Diagnosis:</h5>
-                                        <p id="diagnosis" class="card-text">
-                                        </p>
+                                        <p id="diagnosis" class="card-text"></p>
                                     </li>
                                     <hr class="ppline">
                                     <li class="list-group-item mt-4">
                                         <h5 class="card-subtitle mb-2">Dietary Restriction:</h5>
-                                        <p id="diet" class="card-text">
-                                        </p>
+                                        <p id="diet" class="card-text"></p>
                                     </li>
                                 </ul>
                             </div>
@@ -87,14 +87,12 @@
                                     <hr class="ppline">
                                     <li class="list-group-item mt-4">
                                         <h5 class="card-subtitle mb-2">Medication:</h5>
-                                        <p id="medication" class="card-text">
-                                        </p>
+                                        <p id="medication" class="card-text"></p>
                                     </li>
                                     <hr class="ppline">
                                     <li class="list-group-item mt-4">
                                         <h5 class="card-subtitle mb-2">Behaviour:</h5>
-                                        <p id="behaviour" class="card-text">
-                                        </p>
+                                        <p id="behaviour" class="card-text"></p>
                                     </li>
                                 </ul>
                             </div>
@@ -103,21 +101,94 @@
                             <div class="col-md-6" style="color: #5B4306 !important;">
                                 <h5 class="card-subtitle mb-2">Weight Changes:</h5>
                                 <ul id="weight-changes">
-                                    <li>
-                                        1.
-                                    </li>
+                                    <li>1.</li>
                                 </ul>
                             </div>
                             <div class="col-md-6" style="color: #5B4306 !important;">
                                 <h5 class="card-subtitle mb-2">Medical Notes:</h5>
                                 <ul id="medical-notes">
-                                    <li>
-                                        1.
-                                    </li>
+                                    <li>1.</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Medical Documents Upload & Timeline -->
+            <div class="ppcontent">
+                <div class="card" style="width: 90%;">
+                    <div class="card-body">
+                        <h4>Medical Documents</h4>
+
+                        <!-- Upload Area -->
+                        <div class="upload-drop-zone mb-3" id="drop-zone" role="button" tabindex="0"
+                            aria-label="Click or drag and drop a file to upload">
+                            <div class="upload-icon">&#128206;</div>
+                            <p class="upload-label mb-1">Click to select or drag &amp; drop</p>
+                            <p class="upload-hint">Images (JPG, PNG, GIF) and PDF files accepted</p>
+                            <input type="file" id="file-input" accept="image/*,.pdf" class="d-none"
+                                aria-label="Select file">
+                        </div>
+
+                        <!-- Selected File Preview -->
+                        <div id="file-preview-area" class="d-none mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div id="selected-file-preview"></div>
+                                <div>
+                                    <span id="selected-file-name" class="fw-bold"></span>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary ms-2"
+                                        id="clear-file-btn">&#10005; Remove</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Optional Note -->
+                        <div class="mb-3">
+                            <label for="record-note" class="form-label fw-bold">Note (optional):</label>
+                            <input type="text" id="record-note" class="form-control form-control-sm"
+                                placeholder="e.g. X-ray from vet visit, Vaccination certificate...">
+                        </div>
+
+                        <!-- Upload Button -->
+                        <div class="mb-4 d-flex align-items-center gap-3">
+                            <button type="button" class="btn btn-primary" id="upload-btn" disabled>
+                                Upload File
+                            </button>
+                            <span id="upload-status" class="text-muted small"></span>
+                        </div>
+
+                        <hr>
+
+                        <!-- Upload Timeline -->
+                        <h5 class="mb-3">Upload History</h5>
+                        <p class="text-muted d-none" id="no-uploads-msg">No documents uploaded yet.</p>
+                        <div id="upload-timeline" class="upload-timeline"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imagePreviewModalLabel">Image Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-2">
+                    <img id="preview-modal-img" src="" alt="Preview" class="img-fluid rounded">
+                </div>
+                <div class="modal-footer">
+                    <a id="preview-modal-download" href="#" download class="btn btn-sm btn-outline-secondary">
+                        Download
+                    </a>
+                    <button type="button" class="btn btn-secondary btn-sm"
+                        data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -127,6 +198,7 @@
     <script src="/include/navbar.js"></script>
     <script src="/include/footer.js"></script>
     <script src="/js/pet/medicalHistory.js"></script>
+    <script src="/js/pet/documentUpload.js"></script>
 </body>
 
 </html>
