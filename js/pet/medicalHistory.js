@@ -38,15 +38,29 @@ const mockApiResponse = {
     }
 };
 
-const MH_API_BASE = 'http://localhost:3000/api';
+const MH_API_BASE = 'http://localhost:3000/api/medical-history';
 const mhPetId = new URLSearchParams(window.location.search).get('petId');
 
 document.addEventListener('DOMContentLoaded', () => {
     fillData();
 });
 
-function fillData() {
-    const data = mockApiResponse.data;
+async function fillData() {
+    let data = [];
+    const petId = 1;
+    try {
+        debugger
+        const res = await fetch(`${MH_API_BASE}/${petId}/dashboard`);
+        if(res.status === 200){
+            data = await res.json()
+            data = data.data
+        }else{
+            data = {}
+        }
+    } catch (e) {
+        data = mockApiResponse.data;
+    }
+
 
     document.getElementById('pet-name').textContent = data.name;
     document.getElementById('species').textContent = data.species;
@@ -69,6 +83,7 @@ function fillData() {
         }
     };
 
+    debugger
     populateList('diagnosis', data.diagnosis, item => `${item.description} (Date: ${item.date})`);
     populateList('diet', data.dietary_restrictions, item => item.description);
     populateList('medication', data.medicine, item => `${item.name} - ${item.dosage} - ${item.daily_frequency}x daily`);
