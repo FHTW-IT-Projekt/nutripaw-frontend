@@ -286,6 +286,9 @@ function renderPetList(pets, container) {
                     <a href="/pages/pet/profile.html?petId=${pet.petId}" class="btn btn-tan btn-sm">
                         View Pet Profile
                     </a>
+                    <a href="/pages/pet/access.html?petId=${pet.petId}" class="btn btn-tan btn-sm">
+                        Manage Access
+                    </a>
                     <button class="btn btn-outline-secondary btn-sm" data-edit-pet="${pet.petId}">
                         Edit
                     </button>
