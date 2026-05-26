@@ -38,6 +38,9 @@ const mockApiResponse = {
     }
 };
 
+const MH_API_BASE = 'http://localhost:3000/api';
+const mhPetId = new URLSearchParams(window.location.search).get('petId');
+
 document.addEventListener('DOMContentLoaded', () => {
     fillData();
 });

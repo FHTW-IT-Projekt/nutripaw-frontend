@@ -20,7 +20,14 @@
 
     <div class="petprofile">
         <div class="container-sm w-100">
-            <h1 class="petheading" id="pet-name">Petname</h1>
+            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                <h1 class="petheading mb-0" id="pet-name">Petname</h1>
+                <button id="export-pdf-btn" class="btn btn-export-pdf" title="Download medical history as PDF">
+                    &#128196;
+                    <span id="export-pdf-label">Export PDF</span>
+                    <span id="export-pdf-spinner" class="spinner-border spinner-border-sm ms-1 d-none" role="status" aria-hidden="true"></span>
+                </button>
+            </div>
 
             <!-- Pet Info Card -->
             <div class="ppcontent">
@@ -198,6 +205,7 @@
     <script src="/include/navbar.js"></script>
     <script src="/include/footer.js"></script>
     <script src="/js/pet/medicalHistory.js"></script>
+    <script src="/js/pet/exportPdf.js"></script>
     <script src="/js/pet/documentUpload.js"></script>
 </body>
 
