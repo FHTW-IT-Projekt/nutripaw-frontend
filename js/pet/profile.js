@@ -36,7 +36,7 @@ function escapeHtml(str)
 
 function buildMedicationList(meds)
 {
-    if(!Array.isArray(meds) || meds.lenght === 0)
+    if(!Array.isArray(meds) || meds.length === 0)
     {
         return '<li class="card-text">none</li>';
     }
@@ -49,13 +49,13 @@ function buildMedicationList(meds)
 }
 
 async function fetchReminders() {
-  const res = await fetch('/api/reminders');
+  const res = await fetch('http://localhost:3000/api/reminders');
   if (!res.ok) return [];
   return res.json(); // array of { petId, taskId, enabled, remindTime }
 }
 
 async function upsertReminder({ petId, taskId, enabled, remindTime = null }) {
-  await fetch('/api/reminders', {
+  await fetch('http://localhost:3000/api/reminders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ petId, taskId, enabled, remindTime })
@@ -194,7 +194,7 @@ export function renderPetProfile(pet, container_id) {
                                 </li> <hr class="ppline">
                                 <li class="list-group-item mt-4"> 
                                     <h5 class="card-subtitle mb-2">Gender: </h5>
-                                    <p id="gender-${pid}" cl+ass="card-text">${escapeHtml(pet.gender ?? '-')}</p>
+                                    <p id="gender-${pid}" class="card-text">${escapeHtml(pet.gender ?? '-')}</p>
                                 </li> <hr class="ppline">
                                 <li class="list-group-item mt-4"> 
                                     <h5 class="card-subtitle mb-2">Weight: </h5>
