@@ -9,6 +9,7 @@ export function renderPetCards(petsArray, containerId) {
 
     petsArray.forEach(pet => {
         const foodTask = pet.tasks.find(t => t.name === 'Food');
+        const medTask = pet.tasks.find(t => t.name !== 'Food');
 
         let tasksHtml = "";
         pet.tasks.forEach(task => {
@@ -26,7 +27,7 @@ export function renderPetCards(petsArray, containerId) {
                 <div class="row">
                     <div class="col-md-3 text-center mb-3 mb-md-0">
                         <img src="${pet.imageUrl}" alt="${pet.name}" class="pet-avatar mb-2">
-                        <button class="btn btn-tan w-100 btn-sm">View Full Profile</button>
+                        <button class="btn btn-tan w-100 btn-sm" onclick="location.href='/pages/pet/profile.html'">View Full Profile</button>
                     </div>
                     <div class="col-md-9">
                         <h4 class="mb-3">
@@ -113,7 +114,7 @@ export function buildTaskRow(petId, petName, task) {
                 <span class="time-since-text ms-2" id="last-${petId}-${task.taskId}">
                     | last: ${timeSinceString}
                 </span>
-                <a class="btn btn-outline-warning btn-sm ms-auto" href="/pages/pet/profile.html">Edit</a>
+                <a class="btn btn-outline-warning btn-sm ms-auto" href="/pages/pet/editProfile.html">Edit</a>
             </div>
         </div>
     `;

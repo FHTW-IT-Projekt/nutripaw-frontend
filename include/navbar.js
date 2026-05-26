@@ -25,6 +25,9 @@ if (isLoggedIn) {
             <a class="nav-link text-dark" href="/pages/userprofile.html">My Profile</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link text-dark" href="/pages/user.html">Dashboard</a>
+        </li>        
+        <li class="nav-item">
             <button class="btn btn-link nav-link text-dark" id="logout-btn">Logout</button>
         </li>`;
 } else {
