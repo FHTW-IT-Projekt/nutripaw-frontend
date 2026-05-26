@@ -1,4 +1,6 @@
-const API = 'http://localhost:3000/api';
+import { getImageUrl } from '/js/imageUtil.js';
+
+const API = 'http://127.0.0.1:3000/api';
 
 let currentUser = null;
 
@@ -29,7 +31,8 @@ async function loadUserProfile(session) {
             lastname: nameParts.slice(1).join(' ') || '',
             name: session.name,
             email: session.email,
-            role: session.role || ''
+            role: session.role || '',
+            imageUrl: session.imageUrl || null
         };
     }
 
@@ -47,7 +50,18 @@ function renderUserInfo(user) {
         .join('')
         .toUpperCase()
         .slice(0, 2);
-    document.getElementById('user-initials').textContent = initials;
+
+    const avatarImg = document.getElementById('user-avatar-img');
+    const initialsEl = document.getElementById('user-initials');
+    if (user.imageUrl) {
+    avatarImg.src = getImageUrl(user.imageUrl);
+         avatarImg.classList.remove('d-none');
+        initialsEl.classList.add('d-none');
+    } else {
+        avatarImg.classList.add('d-none');
+        initialsEl.classList.remove('d-none');
+        initialsEl.textContent = initials;
+    }
 
     const roleBadge = document.getElementById('user-role-badge');
     if (user.role) {
@@ -61,6 +75,9 @@ function renderUserInfo(user) {
 function setupEditProfileForm() {
     const modal = document.getElementById('editProfileModal');
     const alertBox = document.getElementById('edit-profile-alert');
+    const imageInput = document.getElementById('edit-profile-image');
+    const modalAvatarImg = document.getElementById('modal-avatar-img');
+    const modalAvatarInitials = document.getElementById('modal-avatar-initials');
 
     document.getElementById('edit-profile-btn').addEventListener('click', () => {
         if (!currentUser) return;
@@ -71,10 +88,51 @@ function setupEditProfileForm() {
         document.getElementById('edit-email').value = currentUser.email || '';
         document.getElementById('edit-role').value = currentUser.role || 'owner';
 
+        imageInput.value = '';
+        if (currentUser.imageUrl) {
+            modalAvatarImg.src = getImageUrl(currentUser.imageUrl);
+            modalAvatarImg.classList.remove('d-none');
+            modalAvatarInitials.classList.add('d-none');
+        } else {
+            const fullName = currentUser.name || [currentUser.firstname, currentUser.lastname].filter(Boolean).join(' ') || '';
+            const initials = fullName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
+            modalAvatarInitials.textContent = initials;
+            modalAvatarImg.classList.add('d-none');
+            modalAvatarInitials.classList.remove('d-none');
+        }
+
         alertBox.className = 'alert d-none';
         document.activeElement.blur();
-        const modalInstance = bootstrap.Modal.getOrCreateInstance(modal);
-        modalInstance.show();
+        bootstrap.Modal.getOrCreateInstance(modal).show();
+    });
+
+    imageInput.addEventListener('change', () => {
+        alertBox.className = 'alert d-none';
+        const file = imageInput.files[0];
+        if (!file) return;
+
+        const allowed = ['image/jpeg', 'image/png'];
+        if (!allowed.includes(file.type)) {
+            alertBox.textContent = 'Invalid file type. Only JPG, JPEG, and PNG images are supported.';
+            alertBox.className = 'alert alert-danger';
+            imageInput.value = '';
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            alertBox.textContent = 'File is too large. Maximum size is 5MB.';
+            alertBox.className = 'alert alert-danger';
+            imageInput.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            modalAvatarImg.src = e.target.result;
+            modalAvatarImg.classList.remove('d-none');
+            modalAvatarInitials.classList.add('d-none');
+        };
+        reader.readAsDataURL(file);
     });
 
     document.getElementById('edit-profile-submit').addEventListener('click', async () => {
@@ -82,6 +140,7 @@ function setupEditProfileForm() {
         const lastname = document.getElementById('edit-lastname').value.trim();
         const email = document.getElementById('edit-email').value.trim();
         const role = document.getElementById('edit-role').value;
+        const imageFile = imageInput.files[0];
 
         alertBox.className = 'alert d-none';
 
@@ -97,11 +156,16 @@ function setupEditProfileForm() {
             return;
         }
 
+        if (imageFile && !['image/jpeg', 'image/png'].includes(imageFile.type)) {
+            alertBox.textContent = 'Invalid file type. Only JPG, JPEG, and PNG images are supported.';
+            alertBox.className = 'alert alert-danger';
+            return;
+        }
+
         try {
-            console.log('currentUser:', currentUser);
-             console.log('userId:', currentUser?.userId);
             const res = await fetch(`${API}/users/${currentUser.userId}`, {
                 method: 'PUT',
+                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ firstname, lastname, email, role })
             });
@@ -118,10 +182,29 @@ function setupEditProfileForm() {
                 role: updated?.role || role
             };
 
+            let imageUploadFailed = false;
+            if (imageFile) {
+                try {
+                    const imgFormData = new FormData();
+                    imgFormData.append('image', imageFile);
+                    const imgRes = await fetch(`${API}/users/${currentUser.userId}/image`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        body: imgFormData
+                    });
+                    if (!imgRes.ok) throw new Error();
+                    const imgData = await imgRes.json().catch(() => null);
+                    if (imgData?.imageUrl) currentUser.imageUrl = imgData.imageUrl;
+                } catch {
+                    imageUploadFailed = true;
+                }
+            }
+
             const session = JSON.parse(sessionStorage.getItem('nutripaw_user') || '{}');
             session.name = currentUser.name;
             session.email = currentUser.email;
             session.role = currentUser.role;
+            if (currentUser.imageUrl) session.imageUrl = currentUser.imageUrl;
             sessionStorage.setItem('nutripaw_user', JSON.stringify(session));
 
             bootstrap.Modal.getInstance(modal).hide();
@@ -129,8 +212,13 @@ function setupEditProfileForm() {
             renderUserInfo(currentUser);
 
             const profileAlert = document.getElementById('profile-alert');
-            profileAlert.textContent = 'Profile updated successfully.';
-            profileAlert.className = 'alert alert-success mt-3';
+            if (imageUploadFailed) {
+                profileAlert.textContent = 'Profile updated, but image upload failed. Please try again.';
+                profileAlert.className = 'alert alert-warning mt-3';
+            } else {
+                profileAlert.textContent = 'Profile updated successfully.';
+                profileAlert.className = 'alert alert-success mt-3';
+            }
             setTimeout(() => { profileAlert.className = 'alert d-none'; }, 4000);
         } catch {
             alertBox.textContent = 'Could not save changes. Please check your connection and try again.';
@@ -140,6 +228,7 @@ function setupEditProfileForm() {
 
     modal.addEventListener('hidden.bs.modal', () => {
         alertBox.className = 'alert d-none';
+        imageInput.value = '';
     });
 }
 
@@ -182,8 +271,8 @@ function renderPetList(pets, container) {
             <div class="row align-items-center">
                 <div class="col-auto">
                     <img
-                        src="${pet.imageUrl || 'https://placecats.com/80/80'}"
-                        alt="${pet.name}"
+                    src="${getImageUrl(pet.imageUrl)}"                      
+                    alt="${pet.name}"
                         class="pet-avatar"
                         data-fallback="https://placecats.com/80/80">
                 </div>

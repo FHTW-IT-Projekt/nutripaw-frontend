@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/pet/editPetProfile.css">
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/userprofile.css">
 </head>
 <body class="bg-light">
     <div id="navCont"></div>
@@ -22,9 +23,22 @@
                     You do not have permission to edit this profile.
                 </div>
                 
+                <div id="image-upload-alert" class="alert d-none" role="alert"></div>
+
                 <form id="pet-form">
                     <input type="hidden" id="pet_id" name="pet_id">
-                    
+
+                    <!-- Pet photo upload -->
+                    <div class="mb-4 text-center">
+                        <div class="avatar-preview-circle mx-auto mb-2" style="width:100px;height:100px;">
+                            <img id="pet-avatar-preview-img" alt="Pet photo" class="d-none" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                            <span id="pet-avatar-preview-icon" style="font-size:2rem;">🐾</span>
+                        </div>
+                        <label for="edit-pet-image" class="btn btn-outline-secondary btn-sm">Change Photo</label>
+                        <input type="file" id="edit-pet-image" accept=".jpg,.jpeg,.png" class="d-none">
+                        <p class="form-text mb-0">JPG, JPEG, PNG · max 5 MB</p>
+                    </div>
+
                     <div class="mb-3">
                         <label for="name" class="form-label fw-bold">Pet Name:</label>
                         <input type="text" id="name" name="name" class="form-control" required>
