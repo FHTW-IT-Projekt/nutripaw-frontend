@@ -1,0 +1,145 @@
+/* ── Export PDF button ── */
+.btn-export-pdf {
+    background-color: #988753;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.45rem 1.1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+}
+
+.btn-export-pdf:hover:not(:disabled) {
+    background-color: #7a6c42;
+    color: #fff;
+}
+
+.btn-export-pdf:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* ── Upload drop zone ── */
+.upload-drop-zone {
+    border: 2px dashed #DBD1B1;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    background: rgba(255, 255, 255, 0.4);
+    user-select: none;
+}
+
+.upload-drop-zone:hover,
+.upload-drop-zone.drag-over {
+    border-color: #988753;
+    background: rgba(152, 135, 83, 0.08);
+}
+
+.upload-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.upload-label {
+    color: #988753;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.upload-hint {
+    color: #aaa;
+    font-size: 0.85rem;
+    margin-bottom: 0;
+}
+
+.upload-thumb-preview {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #DBD1B1;
+}
+
+.upload-pdf-icon {
+    font-size: 2.8rem;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Timeline ── */
+.upload-timeline {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+    padding-left: 1rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.25rem;
+    top: 0.75rem;
+    bottom: 0;
+    width: 2px;
+    background: #DBD1B1;
+}
+
+.timeline-item:last-child::before {
+    display: none;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -1.6rem;
+    top: 0.3rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #988753;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #DBD1B1;
+}
+
+.timeline-date {
+    font-size: 0.8rem;
+    color: #988753;
+    font-weight: bold;
+    margin-bottom: 0.4rem;
+}
+
+.timeline-card {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid #DBD1B1;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+}
+
+.timeline-thumb {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #DBD1B1;
+    flex-shrink: 0;
+}
+
+.timeline-pdf-icon {
+    font-size: 2.2rem;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
