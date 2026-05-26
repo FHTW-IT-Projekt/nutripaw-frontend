@@ -1,20 +1,8 @@
-const API = 'http://localhost:3000/api';
+import { getImageUrl } from '/js/imageUtil.js';
+
+const API = 'http://127.0.0.1:3000/api';
 
 let currentUser = null;
-
-function getImageUrl(imageUrl) {
-    if (!imageUrl) return 'https://placecats.com/80/80';
-
-    if (imageUrl.startsWith('http')) {
-        return imageUrl;
-    }
-
-    if (imageUrl.startsWith('/uploads')) {
-        return `http://127.0.0.1:3000${imageUrl}`;
-    }
-
-    return `http://127.0.0.1:3000/uploads/${imageUrl}`;
-}
 
 document.addEventListener('DOMContentLoaded', () => {
     const session = JSON.parse(sessionStorage.getItem('nutripaw_user') || 'null');

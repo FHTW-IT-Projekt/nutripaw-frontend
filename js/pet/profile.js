@@ -1,4 +1,7 @@
 import { attachCheckboxListeners, buildTaskRow, buildFedTodayRow, renderFeedingLog, loadFedTodayStatus } from "/js/pet/petComponents.js";
+import { getImageUrl } from "/js/imageUtil.js";
+
+const API = 'http://localhost:3000/api';
 // Wait for the HTML document to fully load
 document.addEventListener('DOMContentLoaded', () => {
     fetchPetData();
@@ -6,21 +9,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Fetch the JSON and tell the imported function to draw it
 async function fetchPetData() {
-    try {
-        const response = await fetch('/dummy_data/petprofile.json');
-        const data = await response.json();
+    const params = new URLSearchParams(document.location.search);
+    const petId = params.get('petId');
 
-        // Use the imported function here!
-        renderPetProfile(data.myPets[0], 'pet_profile_content');
+    let pet = null;
+    let allPets = [];
 
-        const allPets = [...data.myPets, ...data.petsitting];
-        loadFedTodayStatus(allPets);
-        renderFeedingLog();
-
-    } catch (error) {
-        console.error("Error loading pet data:", error);
-        document.getElementById('pet_profile_content').innerHTML = "<p>Error loading petprofile.</p>";
+    if (petId) {
+        try {
+            const res = await fetch(`${API}/pets/${petId}`, { credentials: 'include' });
+            if (!res.ok) throw new Error();
+            pet = await res.json();
+            allPets = [pet];
+        } catch {
+            // fall through to dummy data
+        }
     }
+
+    if (!pet) {
+        try {
+            const response = await fetch('/dummy_data/petprofile.json');
+            const data = await response.json();
+            pet = data.myPets[0];
+            allPets = [...data.myPets, ...data.petsitting];
+        } catch (error) {
+            console.error("Error loading pet data:", error);
+            document.getElementById('pet_profile_content').innerHTML = "<p>Error loading pet profile.</p>";
+            return;
+        }
+    }
+
+    renderPetProfile(pet, 'pet_profile_content');
+    loadFedTodayStatus(allPets);
+    renderFeedingLog();
 }
 
 function escapeHtml(str)
@@ -164,13 +185,27 @@ export function renderPetProfile(pet, container_id) {
     }
 
 
-    let htmlContent = `    
-    
-    
+    const session = JSON.parse(sessionStorage.getItem('nutripaw_user') || 'null');
+    const isOwner = session && (
+        !pet.ownerId || pet.ownerId === session.userId
+    );
+
+    const petImgSrc = getImageUrl(pet.imageUrl ?? null);
+
+    let htmlContent = `
+
                 <h1 class="petheading-${pid}">${escapeHtml(pet.name ?? '-')}</h1>
                   <div class="ppcontent">
                     <div class="card" style="width: 90%;">
-                       <img id ="petprofilepicture-${pid}" src="${escapeHtml(pet.imageUrl ?? '-')}" class="card-img-top" alt="raven_pb">
+                       <img id="petprofilepicture-${pid}" src="${petImgSrc}" class="card-img-top" alt="${escapeHtml(pet.name ?? 'pet')}"
+                            onerror="this.src='https://placecats.com/300/200'">
+                       ${isOwner ? `
+                       <div class="text-center py-2" style="background:#f9f6f0;">
+                           <label for="pet-photo-upload-${pid}" class="btn btn-outline-secondary btn-sm">Change Photo</label>
+                           <input type="file" id="pet-photo-upload-${pid}" accept=".jpg,.jpeg,.png" class="d-none"
+                                  data-pet-id="${escapeHtml(String(pet.petId ?? ''))}">
+                           <div id="pet-photo-alert-${pid}" class="alert d-none mt-2 mx-3" role="alert"></div>
+                       </div>` : ''}
                        <div class="card-body" id="pet_profile_content">
                         <div class="row">
                             <!-- Left Column -->
@@ -194,7 +229,7 @@ export function renderPetProfile(pet, container_id) {
                                 </li> <hr class="ppline">
                                 <li class="list-group-item mt-4"> 
                                     <h5 class="card-subtitle mb-2">Gender: </h5>
-                                    <p id="gender-${pid}" cl+ass="card-text">${escapeHtml(pet.gender ?? '-')}</p>
+                                    <p id="gender-${pid}" class="card-text">${escapeHtml(pet.gender ?? '-')}</p>
                                 </li> <hr class="ppline">
                                 <li class="list-group-item mt-4"> 
                                     <h5 class="card-subtitle mb-2">Weight: </h5>
@@ -250,5 +285,55 @@ export function renderPetProfile(pet, container_id) {
         `;
     container.innerHTML = htmlContent;
     attachCheckboxListeners();
-  appendRemindCheckboxes();
+    appendRemindCheckboxes();
+
+    if (isOwner) {
+        setupPetPhotoUpload(pid, pet.petId);
+    }
+}
+
+function setupPetPhotoUpload(pid, petId) {
+    const input = document.getElementById(`pet-photo-upload-${pid}`);
+    const alertBox = document.getElementById(`pet-photo-alert-${pid}`);
+    const img = document.getElementById(`petprofilepicture-${pid}`);
+    if (!input) return;
+
+    input.addEventListener('change', async () => {
+        alertBox.className = 'alert d-none';
+        const file = input.files[0];
+        if (!file) return;
+
+        if (!['image/jpeg', 'image/png'].includes(file.type)) {
+            alertBox.textContent = 'Invalid file type. Only JPG, JPEG, and PNG images are supported.';
+            alertBox.className = 'alert alert-danger';
+            input.value = '';
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            alertBox.textContent = 'File too large. Maximum size is 5 MB.';
+            alertBox.className = 'alert alert-danger';
+            input.value = '';
+            return;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('image', file);
+            const res = await fetch(`${API}/petedit/${petId}/image`, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData
+            });
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            if (data?.imageUrl) img.src = getImageUrl(data.imageUrl);
+            alertBox.textContent = 'Photo updated successfully!';
+            alertBox.className = 'alert alert-success';
+            setTimeout(() => { alertBox.className = 'alert d-none'; }, 3000);
+        } catch {
+            alertBox.textContent = 'Photo upload failed. Please try again.';
+            alertBox.className = 'alert alert-danger';
+        }
+    });
 }

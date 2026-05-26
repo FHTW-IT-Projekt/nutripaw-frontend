@@ -1,4 +1,5 @@
 import { calculateTimeSince } from '../timeUtil.js';
+import { getImageUrl } from '../imageUtil.js';
 
 const API = 'http://localhost:3000/api';
 const LOG_KEY = 'nutripaw-feeding-log';
@@ -8,15 +9,17 @@ export function renderPetCards(petsArray, containerId) {
     let htmlContent = "";
 
     petsArray.forEach(pet => {
-        const foodTask = pet.tasks.find(t => t.name === 'Food');
+        const tasks = pet.tasks || [];
+        const foodTask = tasks.find(t => t.name === 'Food');
 
         let tasksHtml = "";
-        pet.tasks.forEach(task => {
+        tasks.forEach(task => {
             tasksHtml += buildTaskRow(pet.petId, pet.name, task);
         });
 
+        const access = pet.access || [];
         let accessHtml = "";
-        pet.access.forEach(user => {
+        access.forEach(user => {
             let badgeClass = user.role === "Parent" ? "bg-success" : "bg-info text-dark";
             accessHtml += `<span class="me-3">${user.username} <span class="badge ${badgeClass}">${user.role}</span></span>`;
         });
@@ -25,7 +28,8 @@ export function renderPetCards(petsArray, containerId) {
             <div class="pet-card shadow-sm" data-pet-id="${pet.petId}">
                 <div class="row">
                     <div class="col-md-3 text-center mb-3 mb-md-0">
-                        <img src="${pet.imageUrl}" alt="${pet.name}" class="pet-avatar mb-2">
+                        <img src="${getImageUrl(pet.imageUrl)}" alt="${pet.name}" class="pet-avatar mb-2"
+                             onerror="this.src='https://placecats.com/80/80'">
                         <button class="btn btn-tan w-100 btn-sm">View Full Profile</button>
                     </div>
                     <div class="col-md-9">
@@ -36,7 +40,7 @@ export function renderPetCards(petsArray, containerId) {
                         <div class="tasks-container mb-3">
                             ${tasksHtml}
                         </div>
-                        ${pet.access.length > 0 ? `
+                        ${access.length > 0 ? `
                             <div class="task-row">
                                 <strong>Profile Access</strong><br>
                                 ${accessHtml}

@@ -1,3 +1,7 @@
+import { getImageUrl } from '../imageUtil.js';
+
+const API = 'http://127.0.0.1:3000/api';
+
 // Dummy JSON Data (Angepasst an die gewünschte Reihenfolge und Struktur)
 const mockApiResponse = {
     status: 200,
@@ -28,9 +32,11 @@ const mockApiResponse = {
 
 // Initialisation
 document.addEventListener("DOMContentLoaded", () => {
+    setupImageUpload();
+
     let params = new URLSearchParams(document.location.search);
     let action = params.get("action");
-    
+
     if (action === 'add') {
         handleAddActions();
         return;
@@ -40,6 +46,59 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("pet-form").addEventListener("submit", editFormSubmit);
     loadPetData();
 });
+
+function setupImageUpload() {
+    const imageInput = document.getElementById('edit-pet-image');
+    const previewImg = document.getElementById('pet-avatar-preview-img');
+    const previewIcon = document.getElementById('pet-avatar-preview-icon');
+    const alertBox = document.getElementById('image-upload-alert');
+
+    if (!imageInput) return;
+
+    imageInput.addEventListener('change', () => {
+        alertBox.className = 'alert d-none';
+        const file = imageInput.files[0];
+        if (!file) return;
+
+        if (!['image/jpeg', 'image/png'].includes(file.type)) {
+            alertBox.textContent = 'Invalid file type. Only JPG, JPEG, and PNG images are supported.';
+            alertBox.className = 'alert alert-danger';
+            imageInput.value = '';
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            alertBox.textContent = 'File too large. Maximum size is 5 MB.';
+            alertBox.className = 'alert alert-danger';
+            imageInput.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            previewImg.src = e.target.result;
+            previewImg.classList.remove('d-none');
+            previewIcon.classList.add('d-none');
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+async function uploadPetImage(petId, imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    const token = localStorage.getItem('authToken'); // Falls Sie einen Token speichern
+    
+    const res = await fetch(`${API}/petedit/${petId}/image`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}` // Token-basierte Auth
+        },
+        body: formData
+    });
+    if (!res.ok) throw new Error('Upload failed');
+    return res.json();
+}
 
 function handleAddActions() {
     const pageTitle = document.getElementById('page-title');
@@ -118,20 +177,41 @@ const editFormSubmit = async (e) => {
 
     const formData = new FormData(e.target);
     const payload = buildPayload(formData);
+    const imageFile = document.getElementById('edit-pet-image')?.files[0];
+    const alertBox = document.getElementById('image-upload-alert');
 
     console.log("Submitting Update Payload to Backend:", JSON.stringify(payload, null, 2));
 
     try {
-        const response = await fetch('/api/pets/update', {
-            method: 'POST',
+        console.log(document.cookie);
+        const response = await fetch(`${API}/petedit/${payload.pet_id}`, {
+            method: 'PUT',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ ...payload.pet_data, ...payload.health_record_data })
         });
 
-        alert("Pet profile updated successfully!");
+        if (imageFile && payload.pet_id) {
+            try {
+                const imgData = await uploadPetImage(payload.pet_id, imageFile);
+                if (imgData?.imageUrl) {
+                    document.getElementById('pet-avatar-preview-img').src = getImageUrl(imgData.imageUrl);
+                }
+            } catch {
+                alertBox.textContent = 'Profile saved, but photo upload failed. Please try again.';
+                alertBox.className = 'alert alert-warning';
+                return;
+            }
+        }
+
+        alertBox.textContent = 'Pet profile updated successfully!';
+        alertBox.className = 'alert alert-success';
+        setTimeout(() => { alertBox.className = 'alert d-none'; }, 4000);
     } catch (error) {
         console.error("Error updating pet profile:", error);
-        alert("Simulated Success! Check console for the POST payload.");
+        alertBox.textContent = 'Simulated Success! Check console for the POST payload.';
+        alertBox.className = 'alert alert-info';
+        setTimeout(() => { alertBox.className = 'alert d-none'; }, 4000);
     }
 };
 
@@ -140,20 +220,42 @@ const addFormSubmit = async (e) => {
 
     const formData = new FormData(e.target);
     const payload = buildPayload(formData);
+    const imageFile = document.getElementById('edit-pet-image')?.files[0];
+    const alertBox = document.getElementById('image-upload-alert');
 
     console.log("Submitting Create Payload to Backend:", JSON.stringify(payload, null, 2));
 
     try {
-        // Endpunkt für das Erstellen eines neuen Datensatzes
-        const response = await fetch('/api/pets/create', { 
+        const response = await fetch(`${API}/petedit/`, {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ ...payload.pet_data, ...payload.health_record_data })
         });
 
-        alert("Pet profile added successfully!");
+        let newPetId = payload.pet_id;
+        try { const data = await response.json(); newPetId = data?.petId ?? newPetId; } catch { /* ignore */ }
+
+        if (imageFile && newPetId) {
+            try {
+                const imgData = await uploadPetImage(newPetId, imageFile);
+                if (imgData?.imageUrl) {
+                    document.getElementById('pet-avatar-preview-img').src = getImageUrl(imgData.imageUrl);
+                }
+            } catch {
+                alertBox.textContent = 'Pet created, but photo upload failed. You can add a photo by editing the pet.';
+                alertBox.className = 'alert alert-warning';
+                return;
+            }
+        }
+
+        alertBox.textContent = 'Pet profile added successfully!';
+        alertBox.className = 'alert alert-success';
+        setTimeout(() => { alertBox.className = 'alert d-none'; }, 4000);
     } catch (error) {
         console.error("Error adding pet profile:", error);
-        alert("Simulated Success! Check console for the POST payload.");
+        alertBox.textContent = 'Simulated Success! Check console for the POST payload.';
+        alertBox.className = 'alert alert-info';
+        setTimeout(() => { alertBox.className = 'alert d-none'; }, 4000);
     }
 };

@@ -1,31 +1,46 @@
-// 1. IMPORT the render function from the components file
 import { renderPetCards, loadFedTodayStatus, renderFeedingLog } from './pet/petComponents.js';
 
-// Wait for the HTML document to fully load
+const API = 'http://127.0.0.1:3000/api';
+
 document.addEventListener('DOMContentLoaded', () => {
     fetchPetData();
 });
 
-// Fetch the JSON and tell the imported function to draw it
 async function fetchPetData() {
-    try {
-        const response = await fetch('../dummy_data/pet.json');
-        const data = await response.json();
+    let myPets = [];
+    let petsitting = [];
 
-        // Use the imported function here!
-        const addPetButton = document.createElement('button');
-        addPetButton.innerText = 'Add Pet'
-        const myPetsContainer = document.getElementById('my-pets-container');
-        myPetsContainer.appendChild(addPetButton);
-        renderPetCards(data.myPets, 'my-pets-container');
-        renderPetCards(data.petsitting, 'petsitting-container');
+    const session = JSON.parse(sessionStorage.getItem('nutripaw_user') || 'null');
 
-        const allPets = [...data.myPets, ...data.petsitting];
-        loadFedTodayStatus(allPets);
-        renderFeedingLog();
-
-    } catch (error) {
-        console.error("Error loading pet data:", error);
-        document.getElementById('my-pets-container').innerHTML = "<p>Error loading dashboard.</p>";
+    if (session?.userId) {
+        try {
+            const res = await fetch(`${API}/pets?userId=${session.userId}`, { credentials: 'include' });
+            if (!res.ok) throw new Error();
+            myPets = await res.json();
+        } catch {
+            // fall through to dummy data
+        }
     }
+
+    if (myPets.length === 0) {
+        try {
+            const res = await fetch('../dummy_data/pet.json');
+            const data = await res.json();
+            myPets = data.myPets || [];
+            petsitting = data.petsitting || [];
+        } catch (error) {
+            console.error("Error loading pet data:", error);
+            document.getElementById('my-pets-container').innerHTML = "<p>Error loading dashboard.</p>";
+            return;
+        }
+    }
+
+    renderPetCards(myPets, 'my-pets-container');
+    if (petsitting.length > 0) {
+        renderPetCards(petsitting, 'petsitting-container');
+    }
+
+    const allPets = [...myPets, ...petsitting];
+    loadFedTodayStatus(allPets);
+    renderFeedingLog();
 }
