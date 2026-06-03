@@ -104,6 +104,74 @@
                         <textarea id="medicalNotes" name="medicalNotes" class="form-control" rows="3"></textarea>
                     </div>
 
+                    <!-- Neue Felder für die detaillierte Medikamentenplanung -->
+                    <div class="card mt-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Plan new medication</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Medication name</label>
+                                    <input type="text" class="form-control" name="medication_name" placeholder="e.g. Traumeel">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Category/Type</label>
+                                    <input type="text" class="form-control" name="medication_type" placeholder="e.g. Painkiller">
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label">Dosage</label>
+                                    <input type="text" class="form-control" name="dosage" placeholder="e.g. 1 pill, 5ml">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Start-Date</label>
+                                    <input type="date" class="form-control" name="start_date">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">End-Date</label>
+                                    <input type="date" class="form-control" name="end_date">
+                                </div>
+                                
+                                <!-- Rhythmus festlegen -->
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold">Wiederholung</label>
+                                    <select class="form-select" name="medication_interval" id="medication-interval" onchange="toggleWeeklyOptions()">
+                                        <option value="daily">Dayly</option>
+                                        <option value="weekly">Weekly</option>
+                                    </select>
+                                </div>
+
+                                <!--  Wochentage (wird standardmäßig via CSS ausgeblendet, falls täglich) -->
+                                <div class="col-md-12 d-none" id="weekly-days-container">
+                                    <label class="form-label d-block fw-bold">On what days?</label>
+                                    <div class="d-flex gap-3 flex-wrap">
+                                        <label><input type="checkbox" class="week-day-checkbox" value="1"> MO</label>
+                                        <label><input type="checkbox" class="week-day-checkbox" value="2"> TU</label>
+                                        <label><input type="checkbox" class="week-day-checkbox" value="3"> WE</label>
+                                        <label><input type="checkbox" class="week-day-checkbox" value="4"> TH</label>
+                                        <label><input type="checkbox" class="week-day-checkbox" value="5"> FR</label>
+                                        <label><input type="checkbox" class="week-day-checkbox" value="6"> SA</label>
+                                        <label><input type="checkbox" class="week-day-checkbox" value="0"> SU</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Dynamische Uhrzeiten-Liste -->
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold">Time schedule for medication</label>
+                                    <div id="dynamic-times-list" class="d-flex flex-column gap-2 mb-2">
+                                        <!-- Hier landen die Uhrzeiten-Zeilen -->
+                                        <div class="d-flex gap-2 time-row">
+                                            <input type="time" class="form-control med-time-input" style="max-width: 150px;" value="08:00" required>
+                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.parentElement.remove()">X</button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-secondary btn-sm" id="add-time-btn">+ add time</button>
+                                </div>                                
+
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="d-flex justify-content-end gap-2 mt-4">
                         <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancel</button>
                         <button type="submit" class="btn btn-primary btn-save" id="profile-save-btn">Save Changes</button>

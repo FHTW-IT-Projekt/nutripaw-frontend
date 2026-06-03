@@ -150,6 +150,20 @@ function loadPetData() {
 function buildPayload(formData) {
     const petIdVal = formData.get("pet_id");
     
+//Neuerungen Medication Handling
+    // 1. Alle dynamisch generierten Uhrzeit-Inputs auslesen
+    const timeInputs = document.querySelectorAll('.med-time-input');
+    const selectedTimes = Array.from(timeInputs).map(input => input.value);
+    
+    // 2. Wochentage auslesen (falls wöchentlich gewählt wurde)
+    const interval = formData.get("medication_interval");
+    let targetDays = "all"; 
+    if (interval === "weekly") {
+        const checkedDays = document.querySelectorAll('.week-day-checkbox:checked');
+        targetDays = Array.from(checkedDays).map(box => box.value).join(','); // z.B. "1,4"
+    }
+
+
     return {
         pet_id: petIdVal ? parseInt(petIdVal) : null, // Bei 'add' eventuell noch nicht vorhanden
         pet_data: {
@@ -168,6 +182,16 @@ function buildPayload(formData) {
             dietaryRestrictions: formData.get("dietaryRestrictions"),
             medicalNotes: formData.get("medicalNotes"),
             record_date: new Date().toISOString().split('T')[0] // Aktuelles Datum
+        },
+        // --- SAUBERE, SEPARATE STRUKTUR FÜR DAS MEDIKAMENT ---
+        medication_data: {
+            medication_name: formData.get("medication_name"),
+            medication_type: formData.get("medication_type"),
+            dosage: formData.get("dosage"),
+            start_date: formData.get("start_date"),
+            end_date: formData.get("end_date"),
+            times: selectedTimes,      // Wird als Array übergeben, z.B. ["08:00", "20:00"]
+            week_days: targetDays      // Wird als String übergeben, z.B. "all" oder "1,4"
         }
     };
 }
@@ -188,7 +212,7 @@ const editFormSubmit = async (e) => {
             method: 'PUT',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...payload.pet_data, ...payload.health_record_data })
+            body: JSON.stringify({ ...payload.pet_data, ...payload.health_record_data, ...payload.medication_data })
         });
 
         if (imageFile && payload.pet_id) {
@@ -259,3 +283,66 @@ const addFormSubmit = async (e) => {
         setTimeout(() => { alertBox.className = 'alert d-none'; }, 4000);
     }
 };
+
+//Neuerungen Medication handling
+// Blendet die Wochentage ein/aus, je nach Auswahl
+function toggleWeeklyOptions() {
+    const interval = document.getElementById('medication-interval').value;
+    const daysContainer = document.getElementById('weekly-days-container');
+    if (interval === 'weekly') {
+        daysContainer.classList.remove('d-none');
+    } else {
+        daysContainer.classList.add('d-none');
+    }
+}
+
+// Fügt ein neues Uhrzeit-Eingabefeld hinzu
+document.addEventListener('DOMContentLoaded', () => {
+    const addTimeBtn = document.getElementById('add-time-btn');
+    const container = document.getElementById('dynamic-times-list');
+
+    // Falls der Button auf dieser spezifischen Seite existiert
+    if (addTimeBtn && container) {
+        addTimeBtn.addEventListener('click', () => {
+            // Erstelle eine neue Zeile für die Uhrzeit
+            const newRow = document.createElement('div');
+            newRow.className = 'd-flex gap-2 time-row mt-2'; // mt-2 sorgt für etwas Abstand nach oben
+            
+            newRow.innerHTML = `
+                <input type="time" class="form-control med-time-input" style="max-width: 150px;" value="12:00" required>
+                <button type="button" class="btn btn-outline-danger btn-sm remove-time-btn">X</button>
+            `;
+            
+            // Event-Listener für den Löschen-Button (X) direkt anвязать
+            newRow.querySelector('.remove-time-btn').addEventListener('click', () => {
+                newRow.remove();
+            });
+
+            // Die neue Zeile in die Liste einfügen
+            container.appendChild(newRow);
+
+        });
+    }
+
+
+     const intervalSelect = document.getElementById('medication-interval');
+    const daysContainer = document.getElementById('weekly-days-container');
+
+    if (intervalSelect && daysContainer) {
+        // Wir hören auf jede Änderung des Dropdowns
+        intervalSelect.addEventListener('change', () => {
+            if (intervalSelect.value === 'weekly') {
+                // Zeigt die Wochentage an, indem die Bootstrap-Klasse gelöscht wird
+                daysContainer.classList.remove('d-none');
+            } else {
+                // Versteckt sie wieder bei "daily"
+                daysContainer.classList.add('d-none');
+                
+                // Setzt alle eventuell angehakten Wochentage zurück
+                const checkboxes = daysContainer.querySelectorAll('.week-day-checkbox');
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+
+                  });
+    }
+});
