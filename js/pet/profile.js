@@ -65,7 +65,11 @@ function buildMedicationList(meds)
         const name = escapeHtml(m.name ?? '');
         const dose = m.dose ? ` | ${escapeHtml(m.dose)}` : '';
         const freq = m.frequency ? ` | ${escapeHtml(m.frequency)}` : '';
-        return `<li class="card-text">${name}${dose}${freq}</li>`;
+        const days = m.week_days ? ` | on days: ${escapeHtml(m.week_days)}` : '';
+        const times = m.schedule_times ? ` | at times: ${escapeHtml(m.schedule_times)}` : '';
+
+        return `<li class="card-text"><strong>${name}</strong>${dose}${freq}${days}${times}</li>`;
+
     }).join('');
 }
 
