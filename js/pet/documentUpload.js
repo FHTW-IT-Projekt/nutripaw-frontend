@@ -1,4 +1,5 @@
 const API_BASE = 'http://localhost:3000/api';
+const FILE_BASE = API_BASE.replace('/api', '');
 const petId = new URLSearchParams(window.location.search).get('petId');
 console.log(petId)
 
@@ -180,7 +181,8 @@ function buildTimelineItem(upload) {
     const dateStr  = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     const timeStr  = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
     const isImage  = upload.mime_type && upload.mime_type.startsWith('image/');
-    const safeUrl  = escapeHtml(upload.file_url);
+    const fileUrl  = normalizeFileUrl(upload.file_url);
+    const safeUrl  = escapeHtml(fileUrl);
     const safeName = escapeHtml(upload.filename);
 
     const thumbnail = isImage
@@ -222,6 +224,13 @@ function openImagePreview(url, filename) {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
+function normalizeFileUrl(fileUrl) {
+    if (!fileUrl) return '';
+    if (/^https?:\/\//i.test(fileUrl)) return fileUrl;
+    const slash = fileUrl.startsWith('/') ? '' : '/';
+    return FILE_BASE + slash + fileUrl;
+}
+
 function escapeHtml(str) {
     if (!str) return '';
     return String(str)
@@ -231,3 +240,5 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
 }
+
+
