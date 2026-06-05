@@ -14,7 +14,7 @@ async function fetchPetData() {
 
     if (session?.userId) {
         try {
-            const res = await fetch(`${API}/pets?userId=${session.userId}`, { credentials: 'include' });
+            const res = await fetch(`${API}/pets/dashboard?userId=${session.userId}`, { credentials: 'include' });
             if (!res.ok) throw new Error();
             myPets = await res.json();
         } catch {

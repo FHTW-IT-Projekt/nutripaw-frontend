@@ -11,7 +11,7 @@ export function renderPetCards(petsArray, containerId) {
     petsArray.forEach(pet => {
         const tasks = pet.tasks || [];
         const foodTask = tasks.find(t => t.name === 'Food');
-        const medTask = pet.tasks.find(t => t.name !== 'Food');
+        const medTask = Array.isArray(pet.tasks) && pet.tasks.find(t => t.name !== 'Food');
 
         let tasksHtml = "";
         tasks.forEach(task => {
@@ -118,7 +118,7 @@ export function buildTaskRow(petId, petName, task) {
                 <span class="time-since-text ms-2" id="last-${petId}-${task.taskId}">
                     | last: ${timeSinceString}
                 </span>
-                <a class="btn btn-outline-warning btn-sm ms-auto" href="/pages/pet/profile.html?petId=${pet.petId}">Edit</a>
+                <a class="btn btn-outline-warning btn-sm ms-auto" href="/pages/pet/profile.html?petId=${petId}">Edit</a>
             </div>
         </div>
     `;
