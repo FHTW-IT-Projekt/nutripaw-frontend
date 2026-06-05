@@ -91,3 +91,25 @@ async function fillData() {
     populateList('weight-changes', data.weight_changes, item => `${item.date} || ${item.weight} || ${item.change}`);
     populateList('medical-notes', data.medical_notes, item => `${item.date}: ${item.description}`);
 }
+
+
+const params = new URLSearchParams(document.location.search);
+const petIdforLink = params.get('petId');
+
+console.log("Aus der URL extrahierte petId:", petIdforLink);
+
+// 2. Sicherheits-Check: Falls der Link fehlerhaft war und keine ID mitkam
+if (!petIdforLink) {
+    console.error("Fehler: Keine petId in der URL der medizinischen Historie gefunden!");
+}
+
+const profileBtn = document.getElementById("back-to-profile-btn");
+console.log("profilbtn",profileBtn);
+
+if (profileBtn && petIdforLink) {
+    // Hier wird die ID dynamisch an die URL gehängt!
+    profileBtn.href = `/pages/pet/profile.html?petId=${petIdforLink}`;
+    console.log(" Profil-Link dynamisch gesetzt auf:", profileBtn.href);
+}
+
+console.log("profilbtn",profileBtn.href);

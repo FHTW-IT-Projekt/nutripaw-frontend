@@ -294,6 +294,12 @@ export function renderPetProfile(pet, container_id) {
     if (isOwner) {
         setupPetPhotoUpload(pid, pet.petId);
     }
+
+    const medHisttoryBtn = document.getElementById("view-med-history-btn");
+
+    if (medHisttoryBtn && pet && pet.petId) {
+        medHisttoryBtn.href = `/pages/pet/medicalHistory.html?petId=${pet.petId}`;
+    }
 }
 
 function setupPetPhotoUpload(pid, petId) {

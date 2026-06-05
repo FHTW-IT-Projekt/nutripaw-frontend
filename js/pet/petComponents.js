@@ -118,7 +118,7 @@ export function buildTaskRow(petId, petName, task) {
                 <span class="time-since-text ms-2" id="last-${petId}-${task.taskId}">
                     | last: ${timeSinceString}
                 </span>
-                <a class="btn btn-outline-warning btn-sm ms-auto" href="/pages/pet/editProfile.html">Edit</a>
+                <a class="btn btn-outline-warning btn-sm ms-auto" href="/pages/pet/profile.html?petId=${pet.petId}">Edit</a>
             </div>
         </div>
     `;

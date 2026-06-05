@@ -115,34 +115,65 @@ function handleAddActions() {
     document.getElementById("pet-form").addEventListener("submit", addFormSubmit);
 }
 
-function loadPetData() {
-    const pet = mockApiResponse.data;
+async function loadPetData() {
+   // const pet = mockApiResponse.data;
+    const params = new URLSearchParams(document.location.search);
+    const petId = params.get('petId');
 
-    if (pet.currentUserRole !== "owner") {
-        document.getElementById("edit-pet-form").style.display = "none";
+    if (!petId) {
         document.getElementById("error-message").style.display = "block";
-        document.getElementById("error-message").innerText = "Access Denied: You can only edit profiles for your own pets, not pets you are sitting.";
+        document.getElementById("error-message").innerText = "Fehler: Keine Haustier-ID in der URL gefunden.";
         return;
     }
 
+    try {
+        // Fetch-Aufruf an eure echte API
+        const res = await fetch(`${API}/pets/${petId}`, { credentials: 'include' });
+        if (!res.ok) throw new Error("Fehler beim Laden der API-Daten");
+        
+        const pet = await res.json();
+        console.log(pet);
+
+   /* if (pet.currentUserRole !== "owner") {
+        const editPetForm = document.getElementById("edit-pet-form");
+        if(editPetForm)
+        {
+            editPetForm.style.display = "none";
+        }
+        document.getElementById("error-message").style.display = "block";
+        document.getElementById("error-message").innerText = "Access Denied: You can only edit profiles for your own pets, not pets you are sitting.";
+        return;
+    }*/
+
     // Formularfelder mit bestehenden DB-Daten befüllen (in gewünschter Reihenfolge)
-    if (document.getElementById("pet_id")) document.getElementById("pet_id").value = pet.pet_id;
+    if (document.getElementById("pet_id")) document.getElementById("pet_id").value = pet.petId;
     
     document.getElementById("name").value = pet.name || "";
     document.getElementById("species").value = pet.species || "";
-    document.getElementById("breed").value = pet.breed || "";
+    document.getElementById("race").value = pet.breed || "";
     document.getElementById("age").value = pet.age || "";
-    document.getElementById("color").value = pet.color || "";
+    document.getElementById("colour").value = pet.color || "";
     document.getElementById("gender").value = pet.gender || "";
     document.getElementById("weight").value = pet.weight || "";
-
-    // Verschachtelte Daten aus dem health_record befüllen
-    if (pet.health_record) {
-        document.getElementById("diagnosis").value = pet.health_record.diagnosis || "";
-        document.getElementById("medication").value = pet.health_record.medication || "";
-        document.getElementById("behaviour").value = pet.health_record.behaviour || "";
-        document.getElementById("dietaryRestrictions").value = pet.health_record.dietaryRestrictions || "";
-        document.getElementById("medicalNotes").value = pet.health_record.medicalNotes || "";
+    document.getElementById("diagnosis").value = pet.diagnosis || "";
+    document.getElementById("medication").value = pet.medication || "";
+    document.getElementById("behaviour").value = pet.behaviour || "";
+    document.getElementById("dietary_restrictions").value = pet.dietaryRestrictions || "";
+    document.getElementById("medical_notes").value = pet.medicalNotes || "";
+    
+} catch(error)
+    {
+         console.error("Fehler beim Abrufen der Haustierdaten:", error);
+    
+         // Sicherstellen, dass das Element existiert, bevor style aufgerufen wird
+         const errorElement = document.getElementById("error-message");
+        if (errorElement) {
+            errorElement.style.display = "block";
+            errorElement.innerText = "Fehler beim Laden der echten Datenbank-Daten.";
+        } else {
+            // Fallback, falls das HTML-Element fehlt
+            alert("Fehler beim Laden der echten Datenbank-Daten. Siehe Konsole.");
+        }
     }
 }
 
@@ -286,7 +317,7 @@ const addFormSubmit = async (e) => {
 
 //Neuerungen Medication handling
 // Blendet die Wochentage ein/aus, je nach Auswahl
-function toggleWeeklyOptions() {
+window.toggleWeeklyOptions = function() {
     const interval = document.getElementById('medication-interval').value;
     const daysContainer = document.getElementById('weekly-days-container');
     if (interval === 'weekly') {
@@ -300,6 +331,14 @@ function toggleWeeklyOptions() {
 document.addEventListener('DOMContentLoaded', () => {
     const addTimeBtn = document.getElementById('add-time-btn');
     const container = document.getElementById('dynamic-times-list');
+
+    if (container) {
+        container.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-outline-danger') || e.target.innerText === 'X') {
+                e.target.parentElement.remove();
+            }
+        });
+    }
 
     // Falls der Button auf dieser spezifischen Seite existiert
     if (addTimeBtn && container) {
@@ -327,22 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
      const intervalSelect = document.getElementById('medication-interval');
     const daysContainer = document.getElementById('weekly-days-container');
-
-    if (intervalSelect && daysContainer) {
-        // Wir hören auf jede Änderung des Dropdowns
-        intervalSelect.addEventListener('change', () => {
-            if (intervalSelect.value === 'weekly') {
-                // Zeigt die Wochentage an, indem die Bootstrap-Klasse gelöscht wird
-                daysContainer.classList.remove('d-none');
-            } else {
-                // Versteckt sie wieder bei "daily"
-                daysContainer.classList.add('d-none');
-                
-                // Setzt alle eventuell angehakten Wochentage zurück
-                const checkboxes = daysContainer.querySelectorAll('.week-day-checkbox');
-                checkboxes.forEach(cb => cb.checked = false);
-            }
-
-                  });
+    if (intervalSelect) {
+        intervalSelect.addEventListener('change', window.toggleWeeklyOptions);
     }
 });
