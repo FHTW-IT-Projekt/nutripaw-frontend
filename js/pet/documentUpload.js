@@ -74,7 +74,7 @@ function handleFileSelect(file) {
 function clearFileSelection() {
     selectedFile = null;
     document.getElementById('file-input').value = '';
-    document.getElementById('upload-btn').disabled = true;
+    document.getElementById('upload-btn').disabled = false;
     document.getElementById('file-preview-area').classList.add('d-none');
     document.getElementById('selected-file-preview').innerHTML = '';
     document.getElementById('upload-status').textContent = '';
@@ -82,41 +82,48 @@ function clearFileSelection() {
 
 // ── Upload ─────────────────────────────────────────────────────────────────
 async function uploadFile() {
-    if (!selectedFile) return;
+    if (!selectedFile) {
+        document.getElementById('file-input').click();
+        return;
+    }
 
-    const note      = document.getElementById('record-note').value.trim();
-    const statusEl  = document.getElementById('upload-status');
+    if (!petId) {
+        alert('Kein petId in der URL gefunden.');
+        return;
+    }
+
+    const note = document.getElementById('record-note').value.trim();
+    const statusEl = document.getElementById('upload-status');
     const uploadBtn = document.getElementById('upload-btn');
 
     const formData = new FormData();
     formData.append('file', selectedFile);
-    if (petId) formData.append('petId', petId);
-    if (note)  formData.append('note', note);
+    formData.append('petId', petId);
+    if (note) formData.append('note', note);
 
     statusEl.textContent = 'Uploading...';
     uploadBtn.disabled = true;
 
     try {
-        console.log('petId:', petId);
-        console.log('API:', `${API_BASE}/pets/${petId}/uploads`);
         const res = await fetch(`${API_BASE}/pets/${petId}/uploads`, {
             method: 'POST',
             credentials: 'include',
             body: formData
         });
 
-if (!res.ok) throw new Error(`Status ${res.status}`);
-
-
-        if (!res.ok) throw new Error(`Status ${res.status}`);
+        if (!res.ok) {
+            const message = await getResponseErrorMessage(res);
+            throw new Error(message || `Status ${res.status}`);
+        }
 
         statusEl.textContent = 'Uploaded successfully!';
         document.getElementById('record-note').value = '';
         clearFileSelection();
-        loadUploads();
+        await loadUploads();
+
     } catch (err) {
         console.error('Upload error:', err);
-        statusEl.textContent = 'Upload failed. Please try again.';
+        statusEl.textContent = `Upload failed: ${err.message}`;
         uploadBtn.disabled = false;
     }
 }
@@ -184,6 +191,8 @@ function buildTimelineItem(upload) {
     const fileUrl  = normalizeFileUrl(upload.file_url);
     const safeUrl  = escapeHtml(fileUrl);
     const safeName = escapeHtml(upload.filename);
+    const downloadUrl = `${API_BASE}/pets/${petId}/uploads/${upload.upload_id}/download`;
+    const safeDownloadUrl = escapeHtml(downloadUrl);
 
     const thumbnail = isImage
         ? `<img src="${safeUrl}" alt="${safeName}" class="timeline-thumb">`
@@ -193,7 +202,7 @@ function buildTimelineItem(upload) {
         ? `<button class="btn btn-sm btn-outline-primary"
                onclick="openImagePreview('${safeUrl}', '${safeName}')">Preview</button>`
         : `<a class="btn btn-sm btn-outline-success"
-               href="${safeUrl}" download="${safeName}">Download PDF</a>`;
+               href="${safeDownloadUrl}">Download PDF</a>`;
 
     const noteHtml = upload.note
         ? `<p class="mb-0 text-muted small">${escapeHtml(upload.note)}</p>`
@@ -231,6 +240,20 @@ function normalizeFileUrl(fileUrl) {
     return FILE_BASE + slash + fileUrl;
 }
 
+async function getResponseErrorMessage(res) {
+    try {
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+            const data = await res.json();
+            return data.message || data.error || JSON.stringify(data);
+        }
+
+        return await res.text();
+    } catch {
+        return '';
+    }
+}
+
 function escapeHtml(str) {
     if (!str) return '';
     return String(str)
@@ -240,5 +263,8 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
 }
+
+
+
 
 
