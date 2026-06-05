@@ -115,34 +115,65 @@ function handleAddActions() {
     document.getElementById("pet-form").addEventListener("submit", addFormSubmit);
 }
 
-function loadPetData() {
-    const pet = mockApiResponse.data;
+async function loadPetData() {
+   // const pet = mockApiResponse.data;
+    const params = new URLSearchParams(document.location.search);
+    const petId = params.get('petId');
 
-    if (pet.currentUserRole !== "owner") {
-        document.getElementById("edit-pet-form").style.display = "none";
+    if (!petId) {
         document.getElementById("error-message").style.display = "block";
-        document.getElementById("error-message").innerText = "Access Denied: You can only edit profiles for your own pets, not pets you are sitting.";
+        document.getElementById("error-message").innerText = "Fehler: Keine Haustier-ID in der URL gefunden.";
         return;
     }
 
+    try {
+        // Fetch-Aufruf an eure echte API
+        const res = await fetch(`${API}/pets/${petId}`, { credentials: 'include' });
+        if (!res.ok) throw new Error("Fehler beim Laden der API-Daten");
+        
+        const pet = await res.json();
+        console.log(pet);
+
+   /* if (pet.currentUserRole !== "owner") {
+        const editPetForm = document.getElementById("edit-pet-form");
+        if(editPetForm)
+        {
+            editPetForm.style.display = "none";
+        }
+        document.getElementById("error-message").style.display = "block";
+        document.getElementById("error-message").innerText = "Access Denied: You can only edit profiles for your own pets, not pets you are sitting.";
+        return;
+    }*/
+
     // Formularfelder mit bestehenden DB-Daten befüllen (in gewünschter Reihenfolge)
-    if (document.getElementById("pet_id")) document.getElementById("pet_id").value = pet.pet_id;
+    if (document.getElementById("pet_id")) document.getElementById("pet_id").value = pet.petId;
     
     document.getElementById("name").value = pet.name || "";
     document.getElementById("species").value = pet.species || "";
-    document.getElementById("breed").value = pet.breed || "";
+    document.getElementById("race").value = pet.breed || "";
     document.getElementById("age").value = pet.age || "";
-    document.getElementById("color").value = pet.color || "";
+    document.getElementById("colour").value = pet.color || "";
     document.getElementById("gender").value = pet.gender || "";
     document.getElementById("weight").value = pet.weight || "";
-
-    // Verschachtelte Daten aus dem health_record befüllen
-    if (pet.health_record) {
-        document.getElementById("diagnosis").value = pet.health_record.diagnosis || "";
-        document.getElementById("medication").value = pet.health_record.medication || "";
-        document.getElementById("behaviour").value = pet.health_record.behaviour || "";
-        document.getElementById("dietaryRestrictions").value = pet.health_record.dietaryRestrictions || "";
-        document.getElementById("medicalNotes").value = pet.health_record.medicalNotes || "";
+    document.getElementById("diagnosis").value = pet.diagnosis || "";
+    document.getElementById("medication").value = pet.medication || "";
+    document.getElementById("behaviour").value = pet.behaviour || "";
+    document.getElementById("dietary_restrictions").value = pet.dietaryRestrictions || "";
+    document.getElementById("medical_notes").value = pet.medicalNotes || "";
+    
+} catch(error)
+    {
+         console.error("Fehler beim Abrufen der Haustierdaten:", error);
+    
+         // Sicherstellen, dass das Element existiert, bevor style aufgerufen wird
+         const errorElement = document.getElementById("error-message");
+        if (errorElement) {
+            errorElement.style.display = "block";
+            errorElement.innerText = "Fehler beim Laden der echten Datenbank-Daten.";
+        } else {
+            // Fallback, falls das HTML-Element fehlt
+            alert("Fehler beim Laden der echten Datenbank-Daten. Siehe Konsole.");
+        }
     }
 }
 
@@ -150,6 +181,20 @@ function loadPetData() {
 function buildPayload(formData) {
     const petIdVal = formData.get("pet_id");
     
+//Neuerungen Medication Handling
+    // 1. Alle dynamisch generierten Uhrzeit-Inputs auslesen
+    const timeInputs = document.querySelectorAll('.med-time-input');
+    const selectedTimes = Array.from(timeInputs).map(input => input.value);
+    
+    // 2. Wochentage auslesen (falls wöchentlich gewählt wurde)
+    const interval = formData.get("medication_interval");
+    let targetDays = "all"; 
+    if (interval === "weekly") {
+        const checkedDays = document.querySelectorAll('.week-day-checkbox:checked');
+        targetDays = Array.from(checkedDays).map(box => box.value).join(','); // z.B. "1,4"
+    }
+
+
     return {
         pet_id: petIdVal ? parseInt(petIdVal) : null, // Bei 'add' eventuell noch nicht vorhanden
         pet_data: {
@@ -168,6 +213,16 @@ function buildPayload(formData) {
             dietaryRestrictions: formData.get("dietaryRestrictions"),
             medicalNotes: formData.get("medicalNotes"),
             record_date: new Date().toISOString().split('T')[0] // Aktuelles Datum
+        },
+        // --- SAUBERE, SEPARATE STRUKTUR FÜR DAS MEDIKAMENT ---
+        medication_data: {
+            medication_name: formData.get("medication_name"),
+            medication_type: formData.get("medication_type"),
+            dosage: formData.get("dosage"),
+            start_date: formData.get("start_date"),
+            end_date: formData.get("end_date"),
+            times: selectedTimes,      // Wird als Array übergeben, z.B. ["08:00", "20:00"]
+            week_days: targetDays      // Wird als String übergeben, z.B. "all" oder "1,4"
         }
     };
 }
@@ -188,7 +243,7 @@ const editFormSubmit = async (e) => {
             method: 'PUT',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...payload.pet_data, ...payload.health_record_data })
+            body: JSON.stringify({ ...payload.pet_data, ...payload.health_record_data, ...payload.medication_data })
         });
 
         if (imageFile && payload.pet_id) {
@@ -259,3 +314,59 @@ const addFormSubmit = async (e) => {
         setTimeout(() => { alertBox.className = 'alert d-none'; }, 4000);
     }
 };
+
+//Neuerungen Medication handling
+// Blendet die Wochentage ein/aus, je nach Auswahl
+window.toggleWeeklyOptions = function() {
+    const interval = document.getElementById('medication-interval').value;
+    const daysContainer = document.getElementById('weekly-days-container');
+    if (interval === 'weekly') {
+        daysContainer.classList.remove('d-none');
+    } else {
+        daysContainer.classList.add('d-none');
+    }
+}
+
+// Fügt ein neues Uhrzeit-Eingabefeld hinzu
+document.addEventListener('DOMContentLoaded', () => {
+    const addTimeBtn = document.getElementById('add-time-btn');
+    const container = document.getElementById('dynamic-times-list');
+
+    if (container) {
+        container.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-outline-danger') || e.target.innerText === 'X') {
+                e.target.parentElement.remove();
+            }
+        });
+    }
+
+    // Falls der Button auf dieser spezifischen Seite existiert
+    if (addTimeBtn && container) {
+        addTimeBtn.addEventListener('click', () => {
+            // Erstelle eine neue Zeile für die Uhrzeit
+            const newRow = document.createElement('div');
+            newRow.className = 'd-flex gap-2 time-row mt-2'; // mt-2 sorgt für etwas Abstand nach oben
+            
+            newRow.innerHTML = `
+                <input type="time" class="form-control med-time-input" style="max-width: 150px;" value="12:00" required>
+                <button type="button" class="btn btn-outline-danger btn-sm remove-time-btn">X</button>
+            `;
+            
+            // Event-Listener für den Löschen-Button (X) direkt anвязать
+            newRow.querySelector('.remove-time-btn').addEventListener('click', () => {
+                newRow.remove();
+            });
+
+            // Die neue Zeile in die Liste einfügen
+            container.appendChild(newRow);
+
+        });
+    }
+
+
+     const intervalSelect = document.getElementById('medication-interval');
+    const daysContainer = document.getElementById('weekly-days-container');
+    if (intervalSelect) {
+        intervalSelect.addEventListener('change', window.toggleWeeklyOptions);
+    }
+});
