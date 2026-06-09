@@ -238,14 +238,31 @@ const editFormSubmit = async (e) => {
     console.log("Submitting Update Payload to Backend:", JSON.stringify(payload, null, 2));
 
     try {
-        console.log("document cookie: ",document.cookie);
+        console.log("document cookie: ", document.cookie);
+        
+        // 1. Token holen
+        const token = localStorage.getItem('authToken');
+
         const response = await fetch(`${API}/petedit/${payload.pet_id}`, {
             method: 'PUT',
             credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...payload.pet_data, ...payload.health_record_data, ...payload.medication_data })
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Token integriert
+            },
+            body: JSON.stringify({ 
+                ...payload.pet_data, 
+                ...payload.health_record_data, 
+                ...payload.medication_data 
+            })
         });
 
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Server lehnte die Anfrage ab mit Status: ${response.status}`);
+        }
+
+        // Bildupload-Block
         if (imageFile && payload.pet_id) {
             try {
                 const imgData = await uploadPetImage(payload.pet_id, imageFile);
@@ -255,24 +272,34 @@ const editFormSubmit = async (e) => {
             } catch {
                 alertBox.textContent = 'Profile saved, but photo upload failed. Please try again.';
                 alertBox.className = 'alert alert-warning';
+                alertBox.classList.remove('d-none');
+                setTimeout(() => { window.location.reload(); }, 2000);
                 return;
             }
         }
 
+        // Erfolgs-Block
         alertBox.textContent = 'Pet profile updated successfully!';
         alertBox.className = 'alert alert-success';
-        setTimeout(() => { alertBox.className = 'alert d-none'; }, 4000);
+        alertBox.classList.remove('d-none');
+        
+        setTimeout(() => { 
+            alertBox.className = 'alert d-none'; 
+            window.location.reload(); 
+        }, 1500);
+
     } catch (error) {
         console.error("Error updating pet profile:", error);
-        alertBox.textContent = 'Simulated Success! Check console for the POST payload.';
-        alertBox.className = 'alert alert-info';
+        alertBox.textContent = `Error saving profile: ${error.message}`;
+        alertBox.className = 'alert alert-danger';
+        alertBox.classList.remove('d-none');
         setTimeout(() => { alertBox.className = 'alert d-none'; }, 4000);
     }
 };
-
 const addFormSubmit = async (e) => {
     e.preventDefault();
-
+    console.log("SCHRITT 1: Formular abgeschickt.");
+    
     const formData = new FormData(e.target);
     const payload = buildPayload(formData);
     const imageFile = document.getElementById('edit-pet-image')?.files[0];
@@ -281,16 +308,36 @@ const addFormSubmit = async (e) => {
     console.log("Submitting Create Payload to Backend:", JSON.stringify(payload, null, 2));
 
     try {
+        // 1. Token holen
+        const token = localStorage.getItem('authToken'); 
+
         const response = await fetch(`${API}/petedit/`, {
             method: 'POST',
             credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...payload.pet_data, ...payload.health_record_data })
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Token integriert
+            },
+            body: JSON.stringify({ 
+                ...payload.pet_data, 
+                ...payload.health_record_data,
+                ...payload.medication_data 
+            })
         });
 
-        let newPetId = payload.pet_id;
-        try { const data = await response.json(); newPetId = data?.petId ?? newPetId; } catch { /* ignore */ }
+        // Backend-Fehler abfangen
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Server lehnte die Anfrage ab mit Status: ${response.status}`);
+        }
 
+        let newPetId = payload.pet_id;
+        try { 
+            const data = await response.json(); 
+            newPetId = data?.petId ?? newPetId; 
+        } catch { /* ignorieren */ }
+
+        // Bildupload-Block
         if (imageFile && newPetId) {
             try {
                 const imgData = await uploadPetImage(newPetId, imageFile);
@@ -298,19 +345,29 @@ const addFormSubmit = async (e) => {
                     document.getElementById('pet-avatar-preview-img').src = getImageUrl(imgData.imageUrl);
                 }
             } catch {
-                alertBox.textContent = 'Pet created, but photo upload failed. You can add a photo by editing the pet.';
+                alertBox.textContent = 'Tier erstellt, aber Foto-Upload fehlgeschlagen. Du kannst später ein Foto hinzufügen.';
                 alertBox.className = 'alert alert-warning';
+                alertBox.classList.remove('d-none');
+                setTimeout(() => { window.location.reload(); }, 2000);
                 return;
             }
         }
 
-        alertBox.textContent = 'Pet profile added successfully!';
+        // Erfolgs-Block
+        alertBox.textContent = 'Haustier-Profil erfolgreich hinzugefügt!';
         alertBox.className = 'alert alert-success';
-        setTimeout(() => { alertBox.className = 'alert d-none'; }, 4000);
+        alertBox.classList.remove('d-none'); 
+        
+        setTimeout(() => { 
+            alertBox.className = 'alert d-none'; 
+            window.location.reload(); 
+        }, 1500);
+
     } catch (error) {
-        console.error("Error adding pet profile:", error);
-        alertBox.textContent = 'Simulated Success! Check console for the POST payload.';
-        alertBox.className = 'alert alert-info';
+        console.error("Fehler beim Hinzufügen des Haustier-Profils:", error);
+        alertBox.textContent = `Fehler beim Erstellen des Profils: ${error.message}`;
+        alertBox.className = 'alert alert-danger';
+        alertBox.classList.remove('d-none');
         setTimeout(() => { alertBox.className = 'alert d-none'; }, 4000);
     }
 };

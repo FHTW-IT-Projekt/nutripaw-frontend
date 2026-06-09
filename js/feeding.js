@@ -2,22 +2,47 @@ const API = 'http://localhost:3000/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     setDefaultDateTime();
-    loadPets();
-    loadFeedingLog();
-    loadMedicationLog();
+    
+    // Prüfen, ob die Tabellen existieren, bevor die Logs geladen werden
+    if (document.getElementById('feeding-tbody')) {
+        loadFeedingLog();
+    }
+    if (document.getElementById('med-tbody')) {
+        loadMedicationLog();
+    }
 
-    document.getElementById('pet-select').addEventListener('change', onPetChange);
-    document.getElementById('feeding-form').addEventListener('submit', onSubmit);
+    // Prüfen, ob das Dropdown existiert, bevor Events angehängt werden
+    const petSelect = document.getElementById('pet-select');
+    if (petSelect) {
+        loadPets();
+        petSelect.addEventListener('change', onPetChange);
+    }
+
+    // Prüfen, ob das Formular existiert
+    const feedingForm = document.getElementById('feeding-form');
+    if (feedingForm) {
+        feedingForm.addEventListener('submit', onSubmit);
+    }
 });
 
 function setDefaultDateTime() {
     const now = new Date();
-    document.getElementById('entry-date').value = now.toISOString().split('T')[0];
-    document.getElementById('entry-time').value = now.toTimeString().slice(0, 5);
+    const dateInput = document.getElementById('entry-date');
+    const timeInput = document.getElementById('entry-time');
+    
+    // Nur Werte setzen, wenn die Input-Felder auch gefunden wurden
+    if (dateInput) {
+        dateInput.value = now.toISOString().split('T')[0];
+    }
+    if (timeInput) {
+        timeInput.value = now.toTimeString().slice(0, 5);
+    }
 }
 
 async function loadPets() {
     const select = document.getElementById('pet-select');
+    if (!select) return; // Sicherheits-Check
+
     try {
         const res = await fetch(`${API}/pets`, { credentials: 'include' });
         const pets = await res.json();
@@ -36,6 +61,8 @@ async function onPetChange() {
     const petId = this.value;
     const section = document.getElementById('medication-section');
     const container = document.getElementById('medication-checkboxes');
+
+    if (!section || !container) return; // Sicherheits-Check
 
     if (!petId) {
         section.style.display = 'none';
@@ -132,6 +159,8 @@ async function onSubmit(e) {
 
 export async function loadFeedingLog() {
     const tbody = document.getElementById('feeding-tbody');
+    if (!tbody) return; // Sicherheits-Check
+
     try {
         const res = await fetch(`${API}/food-entries`, { credentials: 'include' });
         const entries = await res.json();
@@ -157,6 +186,8 @@ export async function loadFeedingLog() {
 
 export async function loadMedicationLog() {
     const tbody = document.getElementById('med-tbody');
+    if (!tbody) return; // Sicherheits-Check
+
     try {
         const res = await fetch(`${API}/medication-logs`, { credentials: 'include' });
         const logs = await res.json();
