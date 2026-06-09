@@ -1,6 +1,6 @@
 import { calculateTimeSince } from './timeUtil.js';
 
-const API = 'http://localhost:3000/api';
+const PET_API = 'http://localhost:3000/api';
 let currentPet = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -20,18 +20,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function loadPet(petId, openEdit) {
     try {
-        const res = await fetch(`${API}/getSampleData`);
-        if (!res.ok) throw new Error();
-        currentPet = await res.json();
-    } catch {
-        try {
-            const res = await fetch('../dummy_data/pet.json');
-            const data = await res.json();
-            const all = [...(data.myPets || []), ...(data.petsitting || [])];
-            currentPet = all.find(p => String(p.petId) === String(petId)) || null;
-        } catch {
-            currentPet = null;
+        const res = await fetch(`${PET_API}/pets/${petId}`);
+
+        if (!res.ok) {
+            throw new Error('Pet not found');
         }
+
+        currentPet = await res.json();
+    } catch (error) {
+        console.error('Pet konnte nicht geladen werden:', error);
+        currentPet = null;
     }
 
     if (!currentPet) {
@@ -46,28 +44,57 @@ async function loadPet(petId, openEdit) {
     }
 }
 
-function populatePage(pet) {
-    document.querySelector('.petheading').textContent = pet.name || 'Unknown';
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (!el) {
+        console.warn(`Element fehlt: ${id}`);
+        return;
+    }
+    el.textContent = value || '-';
+}
 
-    if (pet.imageUrl) {
-        document.getElementById('petprofilepicture').src = pet.imageUrl;
+function populatePage(pet) {
+    console.log('populate pet:', pet);
+
+
+    const heading = document.querySelector('.petheading');
+
+    if (heading) {
+        heading.textContent = pet.name || 'Unknown';
     }
 
-    document.getElementById('species').textContent = pet.species || '-';
-    document.getElementById('age').textContent = pet.age || '-';
-    document.getElementById('race').textContent = pet.race || '-';
-    document.getElementById('colour').textContent = pet.colour || '-';
-    document.getElementById('gender').textContent = pet.gender || '-';
-    document.getElementById('diagnosis').textContent = pet.diagnosis || '-';
-    document.getElementById('medication').textContent = pet.medication || '-';
-    document.getElementById('behaviour').textContent = pet.behaviour || '-';
+    const img = document.getElementById('petprofilepicture');
+
+    if (img && pet.imageUrl) {
+        img.src = pet.imageUrl;
+    }
+
+    setText('species', pet.species);
+    setText('age', pet.age);
+    setText('race', pet.breed || pet.race);
+    setText('colour', pet.color || pet.colour);
+    setText('gender', pet.gender);
+    setText('weight', pet.weight);
+    setText('diagnosis', pet.diagnosis);
+    setText('medication', pet.medication);
+    setText('behaviour', pet.behaviour);
+    setText(
+  'dietary',
+  pet.health_record_data?.dietary_restrictions ||
+  pet.dietaryRestrictions ||
+  pet.dietary_restrictions || '-'
+);    
+    setText('medicalNotes', pet.medicalNotes || pet.medical_notes);
 }
 
 function setupOwnershipCheck() {
     const session = JSON.parse(sessionStorage.getItem('nutripaw_user') || 'null');
     if (!session) return;
 
-    const btn = document.getElementById('edit-pet-btn');
+     const btn = document.getElementById('edit-pet-btn');
+
+    if (!btn) return;
+
     btn.classList.remove('d-none');
     btn.addEventListener('click', openEditModal);
 }
@@ -77,11 +104,16 @@ function openEditModal() {
 
     document.getElementById('edit-pet-name').value = currentPet.name || '';
     document.getElementById('edit-pet-species').value = currentPet.species || '';
-    document.getElementById('edit-pet-race').value = currentPet.race || '';
+    document.getElementById('edit-pet-race').value = currentPet.breed || currentPet.race || '';
     document.getElementById('edit-pet-age').value = currentPet.age || '';
-    document.getElementById('edit-pet-colour').value = currentPet.colour || '';
+    document.getElementById('edit-pet-colour').value = currentPet.color || currentPet.colour || '';
+    document.getElementById('edit-pet-gender').value = currentPet.gender || '';
+    document.getElementById('edit-pet-weight').value = currentPet.weight || '';
     document.getElementById('edit-pet-diagnosis').value = currentPet.diagnosis || '';
+    document.getElementById('edit-pet-medication').value = currentPet.medication || '';
     document.getElementById('edit-pet-behaviour').value = currentPet.behaviour || '';
+    document.getElementById('edit-pet-dietary').value = currentPet.dietaryRestrictions || currentPet.dietary_restrictions || '';
+    document.getElementById('edit-pet-medical').value = currentPet.medicalNotes || currentPet.medical_notes || '';
 
     new bootstrap.Modal(document.getElementById('editPetModal')).show();
 }
@@ -95,7 +127,7 @@ function setupEditForm(petId) {
         const species = document.getElementById('edit-pet-species').value.trim();
         const breed = document.getElementById('edit-pet-race').value.trim();
         const age = parseFloat(document.getElementById('edit-pet-age').value.trim()) || 0;
-        const color = document.getElementById('edit-pet-colour').value.trim();
+        const colour = document.getElementById('edit-pet-colour').value.trim();
         const gender = document.getElementById('edit-pet-gender').value.trim();
         const weight = document.getElementById('edit-pet-weight').value.trim();
         const diagnosis = document.getElementById('edit-pet-diagnosis').value.trim();
@@ -112,10 +144,10 @@ function setupEditForm(petId) {
             return;
         }
 
-        const payload = { name, species, breed, age, color, diagnosis, behaviour };
+        const payload = { name, species, breed, age, colour, gender, weight, diagnosis, medication, behaviour, dietaryRestrictions, medicalNotes};
 
         try {
-            const res = await fetch(`${API}/petedit/${petId}`, {
+            const res = await fetch(`${PET_API}/petedit/${petId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
