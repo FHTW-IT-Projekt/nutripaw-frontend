@@ -1,12 +1,17 @@
 const API = 'http://localhost:3000/api';
-
+// guard private pages
+const publicPages = ['/pages/login.html', '/pages/aboutus.html', '/index.html' ];
+const session = JSON.parse(sessionStorage.getItem('nutripaw_user') || 'null');
+if (!session && !publicPages.includes(window.location.pathname)) {
+    window.location.href = '/pages/login.html';
+}
 const container = document.getElementById('navCont');
 
 const isLoggedIn = !!sessionStorage.getItem('nutripaw_user');
 
 const navLinks = [
-    {name: 'Home', link: '/index.html'},
-    {name: 'About us', link: '/pages/aboutus.html'},
+    { name: 'Home', link: '/index.html' },
+    { name: 'About us', link: '/pages/aboutus.html' },
 ];
 
 //Notiz: Logo click -> eingeloggt user dashboard, nicht eingeloggt homepage

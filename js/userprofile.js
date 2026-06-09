@@ -5,12 +5,6 @@ const API = 'http://127.0.0.1:3000/api';
 let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const session = JSON.parse(sessionStorage.getItem('nutripaw_user') || 'null');
-    if (!session) {
-        window.location.href = '/pages/login.html';
-        return;
-    }
-
     loadUserProfile(session);
     loadPets(session.userId);
     setupAddPetForm(session.userId);
