@@ -5,12 +5,6 @@ const API = 'http://127.0.0.1:3000/api';
 let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const session = JSON.parse(sessionStorage.getItem('nutripaw_user') || 'null');
-    if (!session) {
-        window.location.href = '/pages/login.html';
-        return;
-    }
-
     loadUserProfile(session);
     loadPets(session.userId);
     setupAddPetForm(session.userId);
@@ -313,7 +307,10 @@ function setupAddPetForm(userId) {
     const alertBox = document.getElementById('add-pet-alert');
     const modal = document.getElementById('addPetModal');
 
-    document.getElementById('add-pet-submit').addEventListener('click', async () => {
+    document.getElementById('add-pet-submit').addEventListener('click', async (e) => {
+        // 1. Verhindert störendes Standardverhalten des Browsers
+        e.preventDefault(); 
+
         const name = document.getElementById('pet-name').value.trim();
         const species = document.getElementById('pet-species').value.trim();
         const age = document.getElementById('pet-age').value.trim();
@@ -335,8 +332,16 @@ function setupAddPetForm(userId) {
             });
             if (!res.ok) throw new Error();
 
-            bootstrap.Modal.getInstance(modal).hide();
-            loadPets(userId);
+            // 2. Sicherer Weg, das Modal zu schließen, ohne abzustürzen
+            const modalInstance = bootstrap.Modal.getInstance(modal) || bootstrap.Modal.getOrCreateInstance(modal);
+            modalInstance.hide();
+            
+            // 3. Nach einem winzigen Augenblick laden wir die Seite neu. 
+            // Das killt jede blockierende Bootstrap-Schicht und zeigt das neue Tier sofort an.
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+
         } catch {
             alertBox.textContent = 'Could not add pet. Please check your connection and try again.';
             alertBox.className = 'alert alert-danger';
@@ -345,6 +350,7 @@ function setupAddPetForm(userId) {
 
     modal.addEventListener('hidden.bs.modal', () => {
         alertBox.className = 'alert d-none';
-        document.getElementById('add-pet-form').reset();
+        const form = document.getElementById('add-pet-form');
+        if (form) form.reset();
     });
 }
