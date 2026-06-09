@@ -200,9 +200,9 @@ function buildPayload(formData) {
         pet_data: {
             name: formData.get("name"),
             species: formData.get("species"),
-            breed: formData.get("breed"),
+            race: formData.get("race"),
             age: parseFloat(formData.get("age")),
-            color: formData.get("color"),
+            colour: formData.get("colour"),
             gender: formData.get("gender"),
             weight: parseFloat(formData.get("weight"))
         },
@@ -210,8 +210,8 @@ function buildPayload(formData) {
             diagnosis: formData.get("diagnosis"),
             medication: formData.get("medication"),
             behaviour: formData.get("behaviour"),
-            dietaryRestrictions: formData.get("dietaryRestrictions"),
-            medicalNotes: formData.get("medicalNotes"),
+            dietary_restrictions: formData.get("dietary_restrictions"),
+            medical_notes: formData.get("medical_notes"),
             record_date: new Date().toISOString().split('T')[0] // Aktuelles Datum
         },
         // --- SAUBERE, SEPARATE STRUKTUR FÜR DAS MEDIKAMENT ---
@@ -238,7 +238,7 @@ const editFormSubmit = async (e) => {
     console.log("Submitting Update Payload to Backend:", JSON.stringify(payload, null, 2));
 
     try {
-        console.log(document.cookie);
+        console.log("document cookie: ",document.cookie);
         const response = await fetch(`${API}/petedit/${payload.pet_id}`, {
             method: 'PUT',
             credentials: 'include',
