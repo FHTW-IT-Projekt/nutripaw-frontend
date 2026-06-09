@@ -215,6 +215,7 @@ async function onCheckboxChange(e) {
             // backend not reachable
         }
     }
+    updateOverdueStatus();
 }
 
 // ── localStorage: feeding events (for checkbox state) ────────────────────────
@@ -308,6 +309,40 @@ export function renderFeedingLog(containerId = 'feeding-log-container') {
     `;
 }
 
+export function updateOverdueStatus() {
+    const now = new Date();
+    const currentTime = now.toTimeString().slice(0, 5); 
+
+    // reset all pet cards first
+    document.querySelectorAll('.pet-card').forEach(card => {
+        card.classList.remove('border', 'border-danger', 'border-2');
+    });
+
+    // loop through checkboxes to find overdue tasks
+    document.querySelectorAll('.feeding-checkbox').forEach(cb => {
+        const scheduleTime = cb.dataset.scheduleTime; 
+
+        if (scheduleTime && scheduleTime !== 'fedtoday' && scheduleTime.includes(':')) {
+            const isOverdue = !cb.checked && (currentTime > scheduleTime);
+
+            if (isOverdue) {
+                // find the parent pet card and make the border red
+                const petCard = cb.closest('.pet-card');
+                if (petCard) {
+                    petCard.classList.add('border', 'border-danger', 'border-2');
+                }
+                
+                // make the specific task row text red too
+                const taskRow = cb.closest('.task-row');
+                if (taskRow) taskRow.classList.add('text-danger');
+            } else {
+                // ensure text is normal if checked or not overdue
+                const taskRow = cb.closest('.task-row');
+                if (taskRow) taskRow.classList.remove('text-danger');
+            }
+        }
+    });
+}
 // ── Load today's status on page load ─────────────────────────────────────────
 
 export async function loadFedTodayStatus(petsArray) {
@@ -338,5 +373,12 @@ export async function loadFedTodayStatus(petsArray) {
             const fedTodayCb = document.getElementById(`fed-${pet.petId}-${foodTask.taskId}-fedtoday`);
             if (fedTodayCb) fedTodayCb.checked = true;
         }
+    }
+    updateOverdueStatus();
+
+    // run it automatically every 60 seconds (60000 ms) <--
+    // check if a timer already exists to prevent duplicates if this function runs twice
+    if (!window.overdueTimer) {
+        window.overdueTimer = setInterval(updateOverdueStatus, 60000);
     }
 }
