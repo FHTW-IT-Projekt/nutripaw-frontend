@@ -198,11 +198,18 @@ function buildTimelineItem(upload) {
         ? `<img src="${safeUrl}" alt="${safeName}" class="timeline-thumb">`
         : `<div class="timeline-pdf-icon">&#128196;</div>`;
 
-    const action = isImage
+    const action = `
+    <button class="btn btn-sm btn-outline-danger"
+            onclick="deleteUpload(${upload.upload_id})">
+        ✕
+    </button>
+    ${isImage
         ? `<button class="btn btn-sm btn-outline-primary"
                onclick="openImagePreview('${safeUrl}', '${safeName}')">Preview</button>`
         : `<a class="btn btn-sm btn-outline-success"
-               href="${safeDownloadUrl}">Download PDF</a>`;
+               href="${safeDownloadUrl}">Download PDF</a>`
+    }
+`;
 
     const noteHtml = upload.note
         ? `<p class="mb-0 text-muted small">${escapeHtml(upload.note)}</p>`
@@ -266,5 +273,26 @@ function escapeHtml(str) {
 
 
 
+async function deleteUpload(uploadId) {
+const confirmed = confirm('Diese Datei löschen?');
+if (!confirmed) return;
 
+try {
+    const res = await fetch(`${API_BASE}/pets/${petId}/uploads/${uploadId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+    });
 
+    if (!res.ok) {
+        const message = await getResponseErrorMessage(res);
+        throw new Error(message || `Status ${res.status}`);
+    }
+
+    await loadUploads();
+
+} catch (err) {
+    console.error('Delete error:', err);
+    alert(`Datei konnte nicht gelöscht werden: ${err.message}`);
+}
+
+}
