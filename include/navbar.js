@@ -1,6 +1,6 @@
 const API = 'http://localhost:3000/api';
 // guard private pages
-const publicPages = ['/pages/login.html', '/pages/aboutus.html', '/index.html' ];
+const publicPages = ['/pages/login.html', '/pages/aboutus.html', '/index.html', '/pages/register.html'];
 const session = JSON.parse(sessionStorage.getItem('nutripaw_user') || 'null');
 if (!session && !publicPages.includes(window.location.pathname)) {
     window.location.href = '/pages/login.html';
