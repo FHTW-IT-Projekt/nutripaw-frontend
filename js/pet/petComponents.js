@@ -45,7 +45,7 @@ export function renderPetCards(petsArray, containerId) {
                             <div class="task-row">
                                 <strong>Profile Access</strong><br>
                                 ${accessHtml}
-                                <button class="btn btn-outline-warning btn-sm float-end">Edit</button>
+                                <button class="btn text-white btn-sm float-end fw-bold" style="background-color: #8B7355;">Edit</button>
                             </div>
                         ` : ''}
                     </div>
@@ -103,22 +103,33 @@ export function buildTaskRow(petId, petName, task) {
     const timeSinceString = calculateTimeSince(task.lastCompletedTime);
 
     return `
-        <div class="task-row" data-task-id="${task.taskId}">
-            <strong>${task.name}</strong> <span class="badge bg-success mb-2">${task.frequency}</span><br>
-            <div class="d-flex align-items-center flex-wrap">
-                ${scheduleHtml}
-                <label class="me-2 text-muted" style="font-size: 0.9rem;">
-                    late feeding at: <input type="time"
-                        class="form-control form-control-sm time-input ms-1"
-                        data-pet-id="${petId}"
-                        data-pet-name="${petName}"
-                        data-task-id="${task.taskId}"
-                        data-task-name="${task.name}">
-                </label>
-                <span class="time-since-text ms-2" id="last-${petId}-${task.taskId}">
-                    | last: ${timeSinceString}
-                </span>
-                <a class="btn btn-outline-warning btn-sm ms-auto" href="/pages/pet/profile.html?petId=${petId}">Edit</a>
+        <div class="task-row mb-3" data-task-id="${task.taskId}">
+            <div class="d-flex align-items-center justify-content-between flex-wrap">
+                <div>
+                    <strong>${task.name}</strong> 
+                    <span class="badge bg-success mb-2">${task.frequency}</span>
+                </div>
+            </div>
+            
+            <div class="position-relative">
+                <div class="d-inline-flex align-items-center flex-wrap" style="max-width: 85%;">
+                    ${scheduleHtml}
+                    <label class="me-2 text-muted" style="font-size: 0.9rem;">
+                        late feeding at: <input type="time"
+                            class="form-control form-control-sm time-input ms-1"
+                            data-pet-id="${petId}"
+                            data-pet-name="${petName}"
+                            data-task-id="${task.taskId}"
+                            data-task-name="${task.name}">
+                    </label>
+                    <span class="time-since-text ms-2" id="last-${petId}-${task.taskId}">
+                        | last: ${timeSinceString}
+                    </span>
+                </div>
+                
+                <a class="btn text-white btn-sm position-absolute end-0 top-50 translate-middle-y fw-bold" 
+                   style="background-color: #8B7355;" 
+                   href="/pages/pet/profile.html?petId=${petId}">Edit</a>
             </div>
         </div>
     `;
