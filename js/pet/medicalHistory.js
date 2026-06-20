@@ -49,7 +49,6 @@ async function fillData() {
     let data = [];
     const petId = 1;
     try {
-        debugger
         const res = await fetch(`${MH_API_BASE}/${petId}/dashboard`);
         if(res.status === 200){
             data = await res.json()
@@ -83,7 +82,6 @@ async function fillData() {
         }
     };
 
-    debugger
     populateList('diagnosis', data.diagnosis, item => `${item.description} (Date: ${item.date})`);
     populateList('diet', data.dietary_restrictions, item => item.description);
     populateList('medication', data.medicine, item => `${item.name} - ${item.dosage} - ${item.daily_frequency}x daily`);

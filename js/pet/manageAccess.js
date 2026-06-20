@@ -1,6 +1,5 @@
 const API = 'http://127.0.0.1:3000/api';
 const session  = sessionStorage.getItem('nutripaw_user');
-debugger
 
 document.addEventListener("DOMContentLoaded", () => {
     const shareForm = document.getElementById("share-access-form");
@@ -25,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
 // Fetch configuration and permissions directly from backend API
 async function loadAccessData(petId) {
     try {
-        debugger
         const response = await fetch(`${API}/petedit/${petId}/share`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
