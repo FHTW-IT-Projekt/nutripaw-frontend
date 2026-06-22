@@ -283,7 +283,7 @@ function renderPetList(pets, container) {
                     <a href="/pages/pet/access.html?petId=${pet.petId}" class="btn btn-tan btn-sm">
                         Manage Access
                     </a>
-                    <button class="btn text-white btn-sm fw-bold" style="background-color: #8B7355;" data-edit-pet="${pet.petId}">Edit</button>
+                    <button class="btn btn-brown btn-sm" data-edit-pet="${pet.petId}">Edit</button>
                 </div>
             </div>
         </div>

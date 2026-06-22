@@ -49,7 +49,7 @@ export function renderPetCards(petsArray, containerId) {
                         ${accessHtml}
                     </div>
                 </div>
-                <button class="btn text-white btn-sm fw-bold ms-auto" style="background-color: #8B7355;">Edit</button>
+                <button class="btn btn-brown btn-sm ms-auto">Edit</button>
             </div>
         ` : ''}
                     </div>
@@ -131,8 +131,7 @@ export function buildTaskRow(petId, petName, task) {
                     </span>
                 </div>
                 
-                <a class="btn text-white btn-sm fw-bold ms-auto" 
-                   style="background-color: #8B7355;" 
+                <a class="btn btn-brown btn-sm ms-auto" 
                    href="/pages/pet/profile.html?petId=${petId}">Edit</a>
             </div>
         </div>

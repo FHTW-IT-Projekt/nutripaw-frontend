@@ -1,19 +1,100 @@
 /*object-fit: cover -- use for mostly every photo, it prevents the image from stretching if it isn't perfectly square*/
-html
-{
+html {
     /*damit die gradiient hintergrundfarbe nicht in der mitte abbricht und neu beginnt*/
     min-height: 100%;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-body
-{
+body {
     background: linear-gradient(#C7DCB9, #DBD1B1);
 }
 
-h1 h5
-{
+h1 h5 {
     color: #988753;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
+}
+
+/* Brand Primary/Success/Tan Buttons */
+.btn-primary,
+.btn-success,
+.btn-tan {
+    background-color: #d6b876 !important;
+    border-color: #d6b876 !important;
+    color: white !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active,
+.btn-tan:hover,
+.btn-tan:focus,
+.btn-tan:active {
+    background-color: #c2a669 !important;
+    border-color: #c2a669 !important;
+    color: white !important;
+}
+
+/* Brand Secondary/Cancel/Export Buttons */
+.btn-secondary,
+.btn-export-pdf {
+    background-color: #988753 !important;
+    border-color: #988753 !important;
+    color: white !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active,
+.btn-export-pdf:hover,
+.btn-export-pdf:focus,
+.btn-export-pdf:active {
+    background-color: #7a6c42 !important;
+    border-color: #7a6c42 !important;
+    color: white !important;
+}
+
+/* Brand Outline/Back Buttons */
+.btn-outline-secondary {
+    background-color: transparent !important;
+    color: #988753 !important;
+    border-color: #988753 !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus,
+.btn-outline-secondary:active {
+    background-color: #988753 !important;
+    border-color: #988753 !important;
+    color: white !important;
+}
+
+/* Brand Brown Buttons (e.g., edit actions) */
+.btn-brown {
+    background-color: #8b7355 !important;
+    border-color: #8b7355 !important;
+    color: white !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
+
+.btn-brown:hover,
+.btn-brown:focus,
+.btn-brown:active {
+    background-color: #735f45 !important;
+    border-color: #735f45 !important;
+    color: white !important;
 }
