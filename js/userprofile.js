@@ -276,7 +276,7 @@ function renderPetList(pets, container) {
                         ${[pet.species, pet.age, pet.weight].filter(Boolean).join(' · ')}
                     </p>
                 </div>
-                <div class="col-auto d-flex flex-column flex-sm-row gap-2">
+                <div class="col-12 col-md-auto d-flex flex-column flex-sm-row gap-2 mt-3 mt-md-0 justify-content-sm-end">
                     <a href="/pages/pet/profile.html?petId=${pet.petId}" class="btn btn-tan btn-sm">
                         View Pet Profile
                     </a>

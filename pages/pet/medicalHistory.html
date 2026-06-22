@@ -2,6 +2,8 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
@@ -150,10 +152,10 @@
 
                         <!-- Selected File Preview -->
                         <div id="file-preview-area" class="d-none mb-3">
-                            <div class="d-flex align-items-center gap-3">
+                            <div class="d-flex align-items-center gap-3 flex-wrap">
                                 <div id="selected-file-preview"></div>
                                 <div>
-                                    <span id="selected-file-name" class="fw-bold"></span>
+                                    <span id="selected-file-name" class="fw-bold text-break"></span>
                                     <button type="button" class="btn btn-sm btn-outline-secondary ms-2"
                                         id="clear-file-btn">&#10005; Remove</button>
                                 </div>

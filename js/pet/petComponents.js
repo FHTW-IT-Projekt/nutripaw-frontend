@@ -42,12 +42,16 @@ export function renderPetCards(petsArray, containerId) {
                             ${tasksHtml}
                         </div>
                         ${access.length > 0 ? `
-                            <div class="task-row">
-                                <strong>Profile Access</strong><br>
-                                ${accessHtml}
-                                <button class="btn text-white btn-sm float-end fw-bold" style="background-color: #8B7355;">Edit</button>
-                            </div>
-                        ` : ''}
+            <div class="task-row d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <strong>Profile Access</strong><br>
+                    <div class="d-flex flex-wrap gap-2 mt-1">
+                        ${accessHtml}
+                    </div>
+                </div>
+                <button class="btn text-white btn-sm fw-bold ms-auto" style="background-color: #8B7355;">Edit</button>
+            </div>
+        ` : ''}
                     </div>
                 </div>
             </div>
@@ -104,17 +108,17 @@ export function buildTaskRow(petId, petName, task) {
 
     return `
         <div class="task-row mb-3" data-task-id="${task.taskId}">
-            <div class="d-flex align-items-center justify-content-between flex-wrap">
+            <div class="d-flex align-items-center justify-content-between flex-wrap mb-2">
                 <div>
                     <strong>${task.name}</strong> 
-                    <span class="badge bg-success mb-2">${task.frequency}</span>
+                    <span class="badge bg-success">${task.frequency}</span>
                 </div>
             </div>
             
-            <div class="position-relative">
-                <div class="d-inline-flex align-items-center flex-wrap" style="max-width: 85%;">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-inline-flex align-items-center flex-wrap gap-2" style="max-width: 100%;">
                     ${scheduleHtml}
-                    <label class="me-2 text-muted" style="font-size: 0.9rem;">
+                    <label class="d-inline-flex align-items-center me-2 text-muted mb-0" style="font-size: 0.9rem;">
                         late feeding at: <input type="time"
                             class="form-control form-control-sm time-input ms-1"
                             data-pet-id="${petId}"
@@ -122,12 +126,12 @@ export function buildTaskRow(petId, petName, task) {
                             data-task-id="${task.taskId}"
                             data-task-name="${task.name}">
                     </label>
-                    <span class="time-since-text ms-2" id="last-${petId}-${task.taskId}">
+                    <span class="time-since-text" id="last-${petId}-${task.taskId}">
                         | last: ${timeSinceString}
                     </span>
                 </div>
                 
-                <a class="btn text-white btn-sm position-absolute end-0 top-50 translate-middle-y fw-bold" 
+                <a class="btn text-white btn-sm fw-bold ms-auto" 
                    style="background-color: #8B7355;" 
                    href="/pages/pet/profile.html?petId=${petId}">Edit</a>
             </div>

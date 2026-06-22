@@ -45,3 +45,14 @@
 {
     list-style-position: inside;
 }
+
+@media (max-width: 768px) {
+    .welcome {
+        margin: 15px 10px !important;
+        padding: 15px 10px !important;
+        font-size: 1rem !important;
+    }
+    .welcome p {
+        padding: 10px 5px !important;
+    }
+}
